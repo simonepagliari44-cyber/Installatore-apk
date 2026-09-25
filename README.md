@@ -5,8 +5,6 @@
   <p>Applicazione GTK4 + Libadwaita con supporto ADB, anteprima dei metadati e avvio dell’app installata.</p>
 </div>
 
-<p align="center"><a href="https://github.com/simonepagliari44-cyber/Installatore-apk">🌐 Sito web del progetto</a></p>
-
 ---
 
 ## ✨ Funzionalità
