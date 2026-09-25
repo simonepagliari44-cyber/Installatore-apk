@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
- width="40" height="29" viewBox="0 0 40 29"
+ width="48" height="48" viewBox="0 0 48 48"
  preserveAspectRatio="xMidYMid meet">
-  <g transform="translate(0,29) scale(0.1,-0.1)" fill="#e66100" stroke="none">
-    <path d="M0 145 l0 -145 200 0 200 0 0 145 0 145 -200 0 -200 0 0 -145z m280 0 l0 -75 -65 0 -65 0 0 75 0 75 65 0 65 0 0 -75z"/>
-    <g transform="translate(0,-6)">
-      <path d="M164 196 c-3 -7 -4 -35 -2 -62 3 -42 6 -49 26 -52 21 -3 22 0 22 62 0 60 -2 66 -20 66 -11 0 -23 -6 -26 -14z m36 -91 c0 -8 -7 -15 -15 -15 -8 0 -15 7 -15 15 0 8 7 15 15 15 8 0 15 -7 15 -15z"/>
-      <path d="M220 145 c0 -63 1 -66 23 -63 20 3 22 8 22 63 0 55 -2 60 -22 63 -22 3 -23 0 -23 -63z m37 -31 c-3 -3 -12 -4 -19 -1 -8 3 -5 6 6 6 11 1 17 -2 13 -5z m0 -20 c-3 -3 -12 -4 -19 -1 -8 3 -5 6 6 6 11 1 17 -2 13 -5z"/>
-    </g>
+  <g fill="none" stroke="#e66100" stroke-width="4"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 8v17"/>
+    <path d="m15.5 19 8.5 8.5L32.5 19"/>
+    <path d="M9 26.5v10a4.5 4.5 0 0 0 4.5 4.5h21a4.5 4.5 0 0 0 4.5-4.5v-10"/>
   </g>
 </svg>

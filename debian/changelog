@@ -1,5 +1,8 @@
-installatore-apk (1.0.7-1) unstable; urgency=medium
+installatore-apk (1.0.8-1) unstable; urgency=medium
 
+  * Redraw the download indicator as a readable orange outline (tray plus
+    downward arrow): the previous artwork filled the whole 40x29 canvas
+    and rendered as a solid orange block.
   * Add translated package descriptions (it, en, de, fr, es, pt) so the
     software centre shows the text matching the system language, keeping
     the Italian title in every variant.
