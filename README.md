@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.1.6-1_all.deb
+sudo apt install ./dist/installatore-apk_1.1.7-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK4, Libadwaita, ADB, il loader SVG e `aapt` e installa **solo ciò che manca davvero**, una volta sola, chiedendo la password di amministratore in quel momento. Se le dipendenze sono già tutte presenti non viene eseguito alcun `apt-get`.
@@ -135,7 +135,7 @@ adb shell monkey -p <package> -c android.intent.category.LAUNCHER 1
 
 L’app può usare dispositivi wireless già associati ad ADB. Il pairing non viene eseguito dall’interfaccia: configuralo una volta dal terminale con ADB.
 
-### Android 11 e versioni successive
+### 📶 Android 11 e versioni successive
 
 ```bash
 adb pair 192.168.1.100:37000
@@ -159,7 +159,7 @@ L’app esegue le operazioni ADB in background e mostra lo stato nella finestra,
 
 ## 🐛 Risoluzione dei problemi
 
-### L’app non si apre dal menu
+### 🖥️ L’app non si apre dal menu
 
 Il nuovo launcher controlla automaticamente l’ambiente grafico e tenta di installare le dipendenze mancanti. Per verificare cosa succede, esegui il launcher da terminale:
 
@@ -175,7 +175,7 @@ sudo usermod -aG plugdev "$USER"
 
 L’app mostra questa indicazione da sola quando rileva il caso. Dopo l’aggiornamento del pacchetto, esci dalla sessione grafica e rientra per aggiornare il menu delle applicazioni.
 
-### `gi` non è installato
+### 🐍 `gi` non è installato
 
 Il launcher non installa più nulla per conto tuo: indica le dipendenze mancanti e il comando da eseguire. In alternativa puoi installare manualmente i pacchetti PyGObject e le librerie GTK4:
 
@@ -183,7 +183,7 @@ Il launcher non installa più nulla per conto tuo: indica le dipendenze mancanti
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1
 ```
 
-### ADB non viene trovato
+### 🔌 ADB non viene trovato
 
 Installa Android Platform Tools oppure imposta il percorso dell’eseguibile:
 
@@ -193,7 +193,7 @@ export ADB=/percorso/assoluto/adb
 python3 main.py
 ```
 
-### Il dispositivo è `unauthorized`
+### 🔓 Il dispositivo è `unauthorized`
 
 Accetta la richiesta di autorizzazione sullo schermo del telefono. Se il problema persiste:
 
@@ -203,7 +203,7 @@ adb start-server
 adb devices -l
 ```
 
-### I metadati dell’APK non possono essere letti
+### 📄 I metadati dell’APK non possono essere letti
 
 Installa `aapt` o `aapt2` e riprova. In alternativa, usa il fallback opzionale:
 
@@ -213,7 +213,7 @@ python3 -m venv --system-site-packages ~/.venvs/installatore-apk
 ~/.venvs/installatore-apk/bin/python main.py /percorso/file.apk
 ```
 
-### L’installazione fallisce
+### ❌ L’installazione fallisce
 
 Controlla che:
 
@@ -231,7 +231,7 @@ Il pacchetto Debian registra automaticamente l’associazione per `application/v
 xdg-mime default com.simonecompany.installatoreapk.desktop application/vnd.android.package-archive
 ```
 
-### Installazione manuale dalla sorgente
+### 🛠️ Installazione manuale dalla sorgente
 
 1. Copia `com.simonecompany.installatoreapk.desktop` in `~/.local/share/applications/`.
 2. Sostituisci i campi `Exec` e `TryExec` con il percorso assoluto del wrapper `installatore-apk` nella cartella del progetto, per esempio `Exec=/home/utente/progetto/installatore-apk %f`.
@@ -258,7 +258,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.1.6-1_all.deb
+dist/installatore-apk_1.1.7-1_all.deb
 ```
 
 Contenuto principale:
@@ -305,7 +305,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.1.6-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.1.7-1_all.deb
 ```
 
 ## ⚠️ Note operative

@@ -1,4 +1,4 @@
-installatore-apk (1.1.6-1) unstable; urgency=medium
+installatore-apk (1.1.7-1) unstable; urgency=medium
 
   * Remove the icon from the "Installa" button: system-software-install-symbolic
     renders as a rectangle with lines inside (a SIM card / a book) in the
