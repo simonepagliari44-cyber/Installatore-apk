@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.2.0-1_all.deb
+sudo apt install ./dist/installatore-apk_1.3.0-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK4, Libadwaita, ADB, il loader SVG e `aapt` e installa **solo ciò che manca davvero**, una volta sola, chiedendo la password di amministratore in quel momento. Se le dipendenze sono già tutte presenti non viene eseguito alcun `apt-get`.
@@ -40,8 +40,8 @@ Dopo l’installazione, apri **Installatore Apk** dal menu delle applicazioni. I
 Il `PKGBUILD` in questa cartella costruisce il pacchetto dai sorgenti presenti nel progetto:
 
 ```bash
-tar -xzf installatore-apk-1.2.0-1-src.tar.gz
-cd installatore-apk-1.2.0-1
+tar -xzf installatore-apk-1.3.0-1-src.tar.gz
+cd installatore-apk-1.3.0-1
 makepkg -si
 ```
 
@@ -51,14 +51,22 @@ Dipendenze richieste: `python-gobject`, `gtk4`, `libadwaita`, `android-tools` e 
 
 ### 🎩 Fedora
 
-Lo spec RPM è in questa cartella, e `build-rpm.sh` prepara l’archivio e genera il pacchetto:
+L’archivio sorgente contiene anche `install.sh`, che installa l’applicazione dove serve senza passare dalla gestione dei pacchetti:
 
 ```bash
-./build-rpm.sh
-sudo dnf install ./dist/installatore-apk-1.2.0-1.noarch.rpm
+sudo dnf install python3-gobject gtk4 libadwaita android-tools librsvg2 aapt
+tar -xzf installatore-apk-1.3.0-1-src.tar.gz
+cd installatore-apk-1.3.0-1
+./install.sh
 ```
 
-Dipendenze richieste: `python3-gobject`, `gtk4`, `libadwaita`, `android-tools` e `librsvg2`. `aapt` è raccomandato per la lettura completa dei metadati dell’APK.
+Per disinstallarla:
+
+```bash
+./install.sh --uninstall
+```
+
+`aapt` serve solo per la lettura completa dei metadati dell’APK: senza, l’app funziona comunque.
 
 Su Fedora, Arch e Debian l’applicazione viene installata con lo stesso layout (`/usr/bin/installatore-apk` più i file dell’app), e il launcher cerca il codice in tutti i percorsi supportati. Su Fedora e Arch le dipendenze le risolve il gestore pacchetti, quindi `postinst` con `apt-get` resta solo nel pacchetto Debian.
 
@@ -285,7 +293,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.2.0-1_all.deb
+dist/installatore-apk_1.3.0-1_all.deb
 ```
 
 Contenuto principale:
@@ -299,6 +307,16 @@ Contenuto principale:
 
 Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-1`; `aapt`/`aapt2` sono consigliati per la lettura dei metadati.
 
+### 🗃️ Archivio sorgente
+
+Lo stesso archivio serve per Arch Linux e Fedora, e contiene il `PKGBUILD` per il primo e `install.sh` per la seconda:
+
+```bash
+./build-src.sh
+```
+
+ genera `dist/installatore-apk-1.3.0-1-src.tar.gz`, con dentro `main.py`, `installatore-apk`, `install.sh`, `PKGBUILD`, il desktop file, l’icona e il README.
+
 ## 🗂️ Struttura del progetto
 
 ```text
@@ -307,10 +325,9 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 ├── installatore-apk              # Wrapper con controllo dell’ambiente
 ├── com.simonecompany.installatoreapk.desktop  # Launcher e integrazione MIME
 ├── build-deb.sh                  # Builder del pacchetto Debian (.deb)
-├── build-rpm.sh                  # Builder del pacchetto Fedora (.rpm)
-├── build-src.sh                  # Archivio sorgente per Arch
+├── build-src.sh                  # Archivio sorgente per Arch e Fedora
+├── install.sh                     # Installatore per Fedora e derivate
 ├── PKGBUILD                      # Pacchetto Arch Linux
-├── installatore-apk.spec          # Pacchetto Fedora
 ├── data/
 │   └── installatore-apk.svg      # Icona vettoriale dell’app
 ├── debian/
@@ -318,7 +335,7 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 │   ├── control                   # Metadati e dipendenze
 │   ├── postinst                  # Aggiornamento cache dopo installazione
 │   └── postrm                    # Pulizia cache dopo rimozione
-├── dist/                         # Pacchetto .deb generato
+├── dist/                         # Artefatti generati, non tracciati da git
 └── README.md
 ```
 
@@ -336,7 +353,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.2.0-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.3.0-1_all.deb
 ```
 
 ## ⚠️ Note operative

@@ -3,7 +3,7 @@
 # Builds a native Arch Linux package from the sources in this directory.
 
 pkgname=installatore-apk
-pkgver=1.2.0
+pkgver=1.3.0
 pkgrel=1
 pkgdesc="Installatore Apk per Android via ADB"
 arch=('any')

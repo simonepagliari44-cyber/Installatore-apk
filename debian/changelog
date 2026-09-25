@@ -1,5 +1,7 @@
-installatore-apk (1.2.0-1) unstable; urgency=medium
+installatore-apk (1.3.0-1) unstable; urgency=medium
 
+  * Replace the Fedora RPM with install.sh inside the source archive, and
+    drop build-rpm.sh and the RPM spec.
   * Add Arch Linux packaging through PKGBUILD and Fedora packaging
     through an RPM spec plus build-rpm.sh, installing the same layout.
   * Make the launcher look for the application in the Fedora and Arch

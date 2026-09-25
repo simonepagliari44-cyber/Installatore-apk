@@ -11,7 +11,7 @@ archive="$dist/$name-$version-src.tar.gz"
 
 command -v tar >/dev/null 2>&1
 
-files="main.py installatore-apk com.simonecompany.installatoreapk.desktop README.md PKGBUILD"
+files="main.py installatore-apk install.sh com.simonecompany.installatoreapk.desktop README.md PKGBUILD"
 for required in $files data/installatore-apk.svg; do
     test -f "$root/$required"
 done
@@ -24,6 +24,8 @@ cp "$root/com.simonecompany.installatoreapk.desktop" \
     "$staging/$name-$version/com.simonecompany.installatoreapk.desktop"
 cp "$root/README.md" "$staging/$name-$version/README.md"
 cp "$root/PKGBUILD" "$staging/$name-$version/PKGBUILD"
+cp "$root/install.sh" "$staging/$name-$version/install.sh"
+chmod 0755 "$staging/$name-$version/install.sh"
 cp "$root/data/installatore-apk.svg" \
     "$staging/$name-$version/data/installatore-apk.svg"
 

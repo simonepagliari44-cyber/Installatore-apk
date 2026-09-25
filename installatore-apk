@@ -2,8 +2,12 @@
 set -eu
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+prefix=${PREFIX:-/usr}
 main_script=""
-for candidate in "$script_dir/main.py" /usr/lib/installatore-apk/main.py /usr/share/installatore-apk/main.py; do
+for candidate in \
+    "$script_dir/main.py" \
+    "$prefix/lib/installatore-apk/main.py" \
+    "$prefix/share/installatore-apk/main.py"; do
     if [ -f "$candidate" ]; then
         main_script=$candidate
         break
