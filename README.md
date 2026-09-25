@@ -29,10 +29,10 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.0.3-1_all.deb
+sudo apt install ./dist/installatore-apk_1.0.4-1_all.deb
 ```
 
-`apt` installa automaticamente le dipendenze dichiarate. Se l’app viene avviata da un’installazione incompleta o con `dpkg -i`, il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e prova a installare le dipendenze mancanti con `apt-get` e `pkexec`, mostrando eventuali errori con `zenity` o notifiche di sistema. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
+L’installazione del pacchetto esegue automaticamente `postinst`: se mancano GTK4, Libadwaita, ADB o `pkexec`, prova a installarli con `apt-get` senza richiedere comandi manuali. Se l’app viene avviata da un’installazione incompleta, anche il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e riprova l’installazione, mostrando eventuali errori con `zenity` o notifiche di sistema. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
 
 Dopo l’installazione, apri **Installatore Apk** dal menu delle applicazioni. Il launcher controlla l’ambiente Python, GTK4/Libadwaita e ADB, poi avvia `/usr/lib/installatore-apk/main.py` con `/usr/bin/python3`.
 
@@ -241,7 +241,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.0.3-1_all.deb
+dist/installatore-apk_1.0.4-1_all.deb
 ```
 
 Contenuto principale:
@@ -287,7 +287,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.0.3-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.0.4-1_all.deb
 ```
 
 ## ⚠️ Note operative

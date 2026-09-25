@@ -1,7 +1,6 @@
-installatore-apk (1.0.3-1) unstable; urgency=medium
+installatore-apk (1.0.4-1) unstable; urgency=medium
 
-  * Detect missing Libadwaita typelibs before starting.
-  * Make GTK and Libadwaita imports explicit and reliable.
+  * Install missing runtime dependencies automatically from the package setup.
   * Keep the graphical interface available when ADB is unavailable.
 
  -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000
