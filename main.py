@@ -987,7 +987,6 @@ class MainWindow(_ApplicationWindowBase):
         self.change_button = Gtk.Button(label="Cambia APK")
         self.change_button.set_valign(Gtk.Align.CENTER)
         self.install_button = Gtk.Button(label="Installa")
-        self.install_button.set_icon_name("system-software-install-symbolic")
         self.install_button.add_css_class("suggested-action")
         self.install_button.add_css_class("install-button")
         actions.append(self.change_button)
