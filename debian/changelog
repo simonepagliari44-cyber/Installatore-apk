@@ -1,9 +1,11 @@
-installatore-apk (1.0.6-1) unstable; urgency=medium
+installatore-apk (1.0.7-1) unstable; urgency=medium
 
+  * Translate the package description to Italian and drop the English
+    variant so every software centre shows the Italian text.
+  * Use the requested orange download icon inside an orange rounded
+    square for the installation progress indicator.
   * Add the installatore-apk CLI: without arguments it uses the single
     .apk file found in the current directory.
-  * Replace the stock download icon with a custom box-and-down-arrow
-    indicator that animates while the installation runs.
   * Show the app icon in the header bar and match the desktop entry to
     the com.simonecompany.installatoreapk application id so the system
     bar no longer shows a generic icon.

@@ -649,10 +649,10 @@ class InstallerApplication(_ApplicationBase):
         }
         .download-frame > contents {
             border-radius: 14px;
-            background: alpha(currentColor, 0.08);
+            background: alpha(#e66100, 0.14);
         }
         .download-frame.is-pulsing > contents {
-            background: alpha(currentColor, 0.22);
+            background: alpha(#e66100, 0.30);
         }
         .success-icon-frame {
             background: #26a269;
