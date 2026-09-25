@@ -26,6 +26,7 @@ Gtk: Any
 Pango: Any
 GI_IMPORT_ERROR: Any
 
+DOWNLOAD_IMAGE_NAME = "download.png"
 DOWNLOAD_ICON_NAMES = (
     "folder-download-symbolic",
     "emblem-download-symbolic",
@@ -940,7 +941,6 @@ class MainWindow(_ApplicationWindowBase):
         self.download_frame.set_valign(Gtk.Align.CENTER)
         self.download_frame.add_css_class("download-frame")
         self.download_area = Gtk.Image()
-        self.download_area.set_from_icon_name(DOWNLOAD_ICON_NAMES[0])
         self.download_area.set_pixel_size(24)
         self.download_area.add_css_class("download-glyph")
         self.download_frame.set_child(self.download_area)
@@ -1420,6 +1420,8 @@ class MainWindow(_ApplicationWindowBase):
             pass
 
     def _set_download_icon(self) -> None:
+        if _set_image_from_asset(self.download_area, DOWNLOAD_IMAGE_NAME):
+            return
         try:
             display = Gdk.Display.get_default()
             theme = (

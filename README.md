@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.1.1-1_all.deb
+sudo apt install ./dist/installatore-apk_1.1.2-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK4, Libadwaita, ADB, il loader SVG e `aapt` e installa **solo ciò che manca davvero**, una volta sola, chiedendo la password di amministratore in quel momento. Se le dipendenze sono già tutte presenti non viene eseguito alcun `apt-get`.
@@ -258,7 +258,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.1.1-1_all.deb
+dist/installatore-apk_1.1.2-1_all.deb
 ```
 
 Contenuto principale:
@@ -267,6 +267,8 @@ Contenuto principale:
 - `/usr/lib/installatore-apk/main.py`
 - `/usr/share/applications/com.simonecompany.installatoreapk.desktop`
 - `/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg`
+- `/usr/share/installatore-apk/installatore-apk.svg`
+- `/usr/share/installatore-apk/download.png`
 - `/usr/share/doc/installatore-apk/README.md`
 
 Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-1`; `aapt`/`aapt2` sono consigliati per la lettura dei metadati.
@@ -276,10 +278,11 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 ```text
 .
 ├── main.py                       # Applicazione e logica ADB
-├── installatore-apk              # Wrapper con controllo e auto-dipendenze
+├── installatore-apk              # Wrapper con controllo dell’ambiente
 ├── com.simonecompany.installatoreapk.desktop  # Launcher e integrazione MIME
 ├── build-deb.sh                  # Builder del pacchetto Debian
 ├── data/
+│   ├── download.png              # Glifo di download per l’indicatore arancione
 │   └── installatore-apk.svg      # Icona vettoriale dell’app
 ├── debian/
 │   ├── changelog                 # Versione del pacchetto
@@ -304,7 +307,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.1.1-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.1.2-1_all.deb
 ```
 
 ## ⚠️ Note operative

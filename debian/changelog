@@ -1,5 +1,10 @@
-installatore-apk (1.1.1-1) unstable; urgency=medium
+installatore-apk (1.1.2-1) unstable; urgency=medium
 
+  * Ship the orange download glyph as a PNG and load it directly, instead
+    of relying on theme icon names: depending on the icon theme the box
+    could show an unrelated symbol. The PNG needs no SVG loader.
+  * Remove the previously built .deb files on every build, so dist/ only
+    ever holds the current package.
   * Stop asking for administrator authentication on every launch: the
     launcher no longer installs anything and never calls pkexec, it only
     reports the missing packages. It was prompting for a password on each
