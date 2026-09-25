@@ -1,5 +1,11 @@
-installatore-apk (1.0.9-1) unstable; urgency=medium
+installatore-apk (1.1.0-1) unstable; urgency=medium
 
+  * Use a standard GTK4 download icon for the installation indicator
+    instead of a hand-drawn one, picking the first name available in the
+    current icon theme.
+  * Stop tracking the generated dist/ folder in git and add a .gitignore
+    for build artefacts.
+  * Drop python3-cairo from the dependencies, no longer needed.
   * Draw the download indicator with Cairo instead of loading an SVG, so
     the orange tray-and-arrow icon shows even without the librsvg loader
     (the standard GNOME icon used to appear in its place).

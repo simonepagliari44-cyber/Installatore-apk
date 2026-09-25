@@ -3,7 +3,7 @@ set -eu
 umask 022
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-version=1.0.9-1
+version=1.1.0-1
 package="installatore-apk_${version}_all.deb"
 staging=$(mktemp -d)
 chmod 0755 "$staging"

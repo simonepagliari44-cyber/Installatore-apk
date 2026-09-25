@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import importlib
-import math
 import os
 import queue
 import re
@@ -24,17 +23,15 @@ Gio: Any
 GLib: Any
 Gtk: Any
 Pango: Any
-cairo: Any
 GI_IMPORT_ERROR: Any
 
-try:
-    cairo = importlib.import_module("cairo")
-except ImportError:
-    cairo = None
-
-LINE_CAP_ROUND = 1 if cairo is None else cairo.LINE_CAP_ROUND
-LINE_JOIN_ROUND = 1 if cairo is None else cairo.LINE_JOIN_ROUND
-DOWNLOAD_COLOR = (230 / 255, 97 / 255, 0 / 255)
+DOWNLOAD_ICON_NAMES = (
+    "software-install-symbolic",
+    "system-software-install-symbolic",
+    "folder-download-symbolic",
+    "emblem-download-symbolic",
+    "go-down-symbolic",
+)
 
 try:
     gi = importlib.import_module("gi")
@@ -675,6 +672,9 @@ class InstallerApplication(_ApplicationBase):
         .download-frame.is-pulsing > contents {
             background: alpha(#e66100, 0.30);
         }
+        .download-glyph {
+            color: #e66100;
+        }
         .success-icon-frame {
             background: #26a269;
         }
@@ -939,12 +939,12 @@ class MainWindow(_ApplicationWindowBase):
         self.download_frame.set_size_request(44, 44)
         self.download_frame.set_valign(Gtk.Align.CENTER)
         self.download_frame.add_css_class("download-frame")
-        self.download_area = Gtk.DrawingArea()
-        self.download_area.set_content_width(26)
-        self.download_area.set_content_height(26)
-        self.download_area.set_draw_func(self._draw_download)
+        self.download_area = Gtk.Image()
+        self.download_area.set_from_icon_name(DOWNLOAD_ICON_NAMES[0])
+        self.download_area.set_pixel_size(24)
+        self.download_area.add_css_class("download-glyph")
         self.download_frame.set_child(self.download_area)
-        self._download_progress = 0.0
+        self._set_download_icon()
         self.busy_label = Gtk.Label(label="Lettura del file APK…")
         self.busy_label.set_wrap(True)
         self.busy_label.add_css_class("busy-label")
@@ -1403,65 +1403,34 @@ class MainWindow(_ApplicationWindowBase):
         except OSError:
             pass
 
-    def _draw_download(
-        self, _area: Any, cr: Any, width: int, height: int
-    ) -> None:
+    def _set_download_icon(self) -> None:
         try:
-            size = float(min(width, height))
-            if size <= 0:
-                return
-            drop = min(1.0, self._download_progress) * 0.17
-
-            cr.set_source_rgb(*DOWNLOAD_COLOR)
-            cr.set_line_width(max(2.0, size * 0.085))
-            cr.set_line_cap(LINE_CAP_ROUND)
-            cr.set_line_join(LINE_JOIN_ROUND)
-
-            # cassetta: U con angoli arrotondati
-            left = size * 0.18
-            right = size * 0.82
-            top = size * 0.50
-            bottom = size * 0.90
-            radius = size * 0.10
-            cr.new_sub_path()
-            cr.move_to(left, top)
-            cr.line_to(left, bottom - radius)
-            cr.arc_negative(
-                left + radius, bottom - radius, radius, math.pi, math.pi / 2
+            display = Gdk.Display.get_default()
+            theme = (
+                Gtk.IconTheme.get_for_display(display)
+                if display is not None
+                else None
             )
-            cr.line_to(right - radius, bottom)
-            cr.arc_negative(
-                right - radius, bottom - radius, radius, math.pi / 2, 0.0
-            )
-            cr.line_to(right, top)
-            cr.stroke()
-
-            # freccia verso il basso
-            center = size * 0.5
-            tip = size * (0.44 + drop)
-            head = size * 0.16
-            cr.move_to(center, size * 0.12)
-            cr.line_to(center, tip)
-            cr.stroke()
-            cr.move_to(center - head, tip - head * 0.85)
-            cr.line_to(center, tip)
-            cr.line_to(center + head, tip - head * 0.85)
-            cr.stroke()
         except Exception:
-            pass
+            theme = None
+        if theme is not None:
+            for name in DOWNLOAD_ICON_NAMES:
+                try:
+                    if theme.has_icon(name):
+                        self.download_area.set_from_icon_name(name)
+                        return
+                except Exception:
+                    continue
+        self.download_area.set_from_icon_name(DOWNLOAD_ICON_NAMES[0])
 
-    def _advance_download(self) -> bool:
+    def _toggle_pulse(self) -> bool:
         if not self.busy_box.get_visible():
             self._set_pulse(False)
             return GLib.SOURCE_REMOVE
-        self._download_progress += 0.08
-        if self._download_progress >= 1.0:
-            self._download_progress = 0.0
-            if "is-pulsing" in self.download_frame.get_css_classes():
-                self.download_frame.remove_css_class("is-pulsing")
-            else:
-                self.download_frame.add_css_class("is-pulsing")
-        self.download_area.queue_draw()
+        if "is-pulsing" in self.download_frame.get_css_classes():
+            self.download_frame.remove_css_class("is-pulsing")
+        else:
+            self.download_frame.add_css_class("is-pulsing")
         return GLib.SOURCE_CONTINUE
 
     def _set_pulse(self, active: bool) -> None:
@@ -1469,12 +1438,10 @@ class MainWindow(_ApplicationWindowBase):
             GLib.source_remove(self._pulse_source_id)
             self._pulse_source_id = 0
         if not active:
-            self._download_progress = 0.0
-            self.download_area.queue_draw()
             if "is-pulsing" in self.download_frame.get_css_classes():
                 self.download_frame.remove_css_class("is-pulsing")
             return
-        self._pulse_source_id = GLib.timeout_add(40, self._advance_download)
+        self._pulse_source_id = GLib.timeout_add(700, self._toggle_pulse)
 
     def _set_busy(self, visible: bool, message: str) -> None:
         self.busy_box.set_visible(visible)
