@@ -3,7 +3,7 @@ set -eu
 umask 022
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-version=1.1.7-1
+version=1.2.0-1
 package="installatore-apk_${version}_all.deb"
 staging=$(mktemp -d)
 chmod 0755 "$staging"
@@ -28,6 +28,7 @@ mkdir -p "$staging/usr/share/installatore-apk"
 chmod 0755 "$staging/usr" "$staging/usr/lib" "$staging/usr/lib/installatore-apk" "$staging/usr/share" "$staging/usr/share/applications" "$staging/usr/share/doc" "$staging/usr/share/doc/installatore-apk" "$staging/usr/share/icons" "$staging/usr/share/icons/hicolor" "$staging/usr/share/icons/hicolor/scalable" "$staging/usr/share/icons/hicolor/scalable/apps" "$staging/usr/share/installatore-apk"
 
 install -m 0755 "$root/main.py" "$staging/usr/lib/installatore-apk/main.py"
+printf '%s\n' "$version" > "$staging/usr/lib/installatore-apk/VERSION"
 install -m 0755 "$root/installatore-apk" "$staging/usr/bin/installatore-apk"
 install -m 0644 "$root/com.simonecompany.installatoreapk.desktop" "$staging/usr/share/applications/com.simonecompany.installatoreapk.desktop"
 install -m 0644 "$root/README.md" "$staging/usr/share/doc/installatore-apk/README.md"

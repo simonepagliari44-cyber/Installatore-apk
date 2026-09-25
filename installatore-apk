@@ -2,10 +2,13 @@
 set -eu
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-main_script="$script_dir/main.py"
-if [ ! -f "$main_script" ]; then
-    main_script="/usr/lib/installatore-apk/main.py"
-fi
+main_script=""
+for candidate in "$script_dir/main.py" /usr/lib/installatore-apk/main.py /usr/share/installatore-apk/main.py; do
+    if [ -f "$candidate" ]; then
+        main_script=$candidate
+        break
+    fi
+done
 python_bin=${INSTALLATORE_APK_PYTHON:-/usr/bin/python3}
 adb_command=${ADB:-adb}
 
@@ -30,13 +33,27 @@ missing_dependencies() {
     printf '%s' "${missing# }"
 }
 
+install_command() {
+    if command -v apt-get >/dev/null 2>&1; then
+        printf '%s' "sudo apt install installatore-apk"
+    elif command -v dnf5 >/dev/null 2>&1; then
+        printf '%s' "sudo dnf5 install installatore-apk"
+    elif command -v dnf >/dev/null 2>&1; then
+        printf '%s' "sudo dnf install installatore-apk"
+    elif command -v pacman >/dev/null 2>&1; then
+        printf '%s' "sudo pacman -S installatore-apk"
+    else
+        printf '%s' "installatore-apk"
+    fi
+}
+
 if [ ! -x "$python_bin" ]; then
-    show_error "Python 3 non è disponibile. Installa il pacchetto installatore-apk e riavvia l'applicazione."
+    show_error "Python 3 non è disponibile. Reinstalla il pacchetto installatore-apk e riavvia l'applicazione."
     exit 1
 fi
 
-if [ ! -f "$main_script" ]; then
-    show_error "File principale non trovato: $main_script"
+if [ -z "$main_script" ]; then
+    show_error "File principale non trovato. Reinstalla il pacchetto installatore-apk."
     exit 1
 fi
 
@@ -44,8 +61,8 @@ missing=$(missing_dependencies)
 if [ -n "$missing" ]; then
     show_error "Dipendenze mancanti:$missing
 
-Installale con il gestore di pacchetti, una volta sola:
-  sudo apt install installatore-apk
+Installale con il gestore pacchetti, una volta sola:
+  $(install_command)
 
 L'applicazione non installerà nulla da sola e non chiederà mai la
 password di amministratore all'avvio."

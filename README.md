@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.1.7-1_all.deb
+sudo apt install ./dist/installatore-apk_1.2.0-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK4, Libadwaita, ADB, il loader SVG e `aapt` e installa **solo ciò che manca davvero**, una volta sola, chiedendo la password di amministratore in quel momento. Se le dipendenze sono già tutte presenti non viene eseguito alcun `apt-get`.
@@ -34,6 +34,29 @@ L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK
 **L’app non chiede mai la password di amministratore all’avvio e funziona con permessi normali.** Il launcher `/usr/bin/installatore-apk` non installa più nulla: si limita a verificare l’ambiente e, se qualcosa manca, mostra un messaggio con il comando da eseguire. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
 
 Dopo l’installazione, apri **Installatore Apk** dal menu delle applicazioni. Il launcher controlla l’ambiente Python, GTK4/Libadwaita e ADB, poi avvia `/usr/lib/installatore-apk/main.py` con `/usr/bin/python3`.
+
+### 🐦 Arch Linux
+
+Il `PKGBUILD` in questa cartella costruisce il pacchetto dai sorgenti presenti nel progetto:
+
+```bash
+makepkg -si
+```
+
+Dipendenze richieste: `python-gobject`, `gtk4`, `libadwaita`, `android-tools` e `librsvg`. `aapt2` è opzionale e serve solo per la lettura completa dei metadati dell’APK.
+
+### 🎩 Fedora
+
+Lo spec RPM è in questa cartella, e `build-rpm.sh` prepara l’archivio e genera il pacchetto:
+
+```bash
+./build-rpm.sh
+sudo dnf install ./dist/installatore-apk-1.2.0-1.noarch.rpm
+```
+
+Dipendenze richieste: `python3-gobject`, `gtk4`, `libadwaita`, `android-tools` e `librsvg2`. `aapt` è raccomandato per la lettura completa dei metadati dell’APK.
+
+Su Fedora, Arch e Debian l’applicazione viene installata con lo stesso layout (`/usr/bin/installatore-apk` più i file dell’app), e il launcher cerca il codice in tutti i percorsi supportati. Su Fedora e Arch le dipendenze le risolve il gestore pacchetti, quindi `postinst` con `apt-get` resta solo nel pacchetto Debian.
 
 ### 🧑‍💻 Esecuzione dalla sorgente
 
@@ -246,7 +269,7 @@ xdg-mime default com.simonecompany.installatoreapk.desktop application/vnd.andro
    gtk4-update-icon-cache -q -t -f ~/.local/share/icons/hicolor 2>/dev/null || gtk-update-icon-cache -q -t -f ~/.local/share/icons/hicolor 2>/dev/null || true
    ```
 
-## 📦 Costruire il pacchetto `.deb`
+## 📦 Costruire i pacchetti
 
 Il repository include uno script riproducibile che usa `dpkg-deb`:
 
@@ -258,7 +281,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.1.7-1_all.deb
+dist/installatore-apk_1.2.0-1_all.deb
 ```
 
 Contenuto principale:
@@ -279,7 +302,10 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 ├── main.py                       # Applicazione e logica ADB
 ├── installatore-apk              # Wrapper con controllo dell’ambiente
 ├── com.simonecompany.installatoreapk.desktop  # Launcher e integrazione MIME
-├── build-deb.sh                  # Builder del pacchetto Debian
+├── build-deb.sh                  # Builder del pacchetto Debian (.deb)
+├── build-rpm.sh                  # Builder del pacchetto Fedora (.rpm)
+├── PKGBUILD                      # Pacchetto Arch Linux
+├── installatore-apk.spec          # Pacchetto Fedora
 ├── data/
 │   └── installatore-apk.svg      # Icona vettoriale dell’app
 ├── debian/
@@ -305,7 +331,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.1.7-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.2.0-1_all.deb
 ```
 
 ## ⚠️ Note operative

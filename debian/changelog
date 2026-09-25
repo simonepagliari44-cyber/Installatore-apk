@@ -1,5 +1,11 @@
-installatore-apk (1.1.7-1) unstable; urgency=medium
+installatore-apk (1.2.0-1) unstable; urgency=medium
 
+  * Add Arch Linux packaging through PKGBUILD and Fedora packaging
+    through an RPM spec plus build-rpm.sh, installing the same layout.
+  * Make the launcher look for the application in the Fedora and Arch
+    locations and suggest the right package manager when dependencies
+    are missing.
+  * Restore the emoji headings in the README.
   * Remove the icon from the "Installa" button: system-software-install-symbolic
     renders as a rectangle with lines inside (a SIM card / a book) in the
     default icon theme, and it was the symbol left in the orange button.
