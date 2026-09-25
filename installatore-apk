@@ -20,11 +20,11 @@ show_error() {
 }
 
 check_gui() {
-    "$python_bin" -c 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); from gi.repository import Gtk, Adw' >/dev/null 2>&1
+    "$python_bin" -c 'import gi, importlib; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); importlib.import_module("gi.repository.Gtk"); importlib.import_module("gi.repository.Adw")' >/dev/null 2>&1
 }
 
 install_dependencies() {
-    dependencies="python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb xdg-utils desktop-file-utils"
+    dependencies="python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb xdg-utils desktop-file-utils policykit-1"
     if command -v apt-get >/dev/null 2>&1; then
         if [ "$(id -u)" -eq 0 ]; then
             apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true

@@ -1,5 +1,7 @@
-installatore-apk (1.0.2-1) unstable; urgency=medium
+installatore-apk (1.0.3-1) unstable; urgency=medium
 
-  * Do not block the graphical interface when ADB is unavailable.
+  * Detect missing Libadwaita typelibs before starting.
+  * Make GTK and Libadwaita imports explicit and reliable.
+  * Keep the graphical interface available when ADB is unavailable.
 
  -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000

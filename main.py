@@ -29,13 +29,12 @@ try:
     gi = importlib.import_module("gi")
     gi.require_version("Gtk", "4.0")
     gi.require_version("Adw", "1")
-    repository = importlib.import_module("gi.repository")
-    Adw = repository.Adw
-    Gdk = repository.Gdk
-    Gio = repository.Gio
-    GLib = repository.GLib
-    Gtk = repository.Gtk
-    Pango = repository.Pango
+    Adw = importlib.import_module("gi.repository.Adw")
+    Gdk = importlib.import_module("gi.repository.Gdk")
+    Gio = importlib.import_module("gi.repository.Gio")
+    GLib = importlib.import_module("gi.repository.GLib")
+    Gtk = importlib.import_module("gi.repository.Gtk")
+    Pango = importlib.import_module("gi.repository.Pango")
 except (ImportError, ValueError, AttributeError) as error:
     gi = None
     Adw = None

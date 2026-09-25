@@ -29,7 +29,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.0.2-1_all.deb
+sudo apt install ./dist/installatore-apk_1.0.3-1_all.deb
 ```
 
 `apt` installa automaticamente le dipendenze dichiarate. Se l’app viene avviata da un’installazione incompleta o con `dpkg -i`, il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e prova a installare le dipendenze mancanti con `apt-get` e `pkexec`, mostrando eventuali errori con `zenity` o notifiche di sistema. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
@@ -42,7 +42,7 @@ Installa le dipendenze su Ubuntu/Debian:
 
 ```bash
 sudo apt update
-sudo apt install python3 python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb aapt xdg-utils
+sudo apt install python3 python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb aapt xdg-utils policykit-1
 ```
 
 Poi avvia l’applicazione dalla cartella del progetto:
@@ -241,7 +241,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.0.2-1_all.deb
+dist/installatore-apk_1.0.3-1_all.deb
 ```
 
 Contenuto principale:
@@ -252,7 +252,7 @@ Contenuto principale:
 - `/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg`
 - `/usr/share/doc/installatore-apk/README.md`
 
-Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita e ADB; `aapt`/`aapt2` e `policykit-1` sono consigliati per la lettura dei metadati e l’installazione automatica delle dipendenze.
+Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-1`; `aapt`/`aapt2` sono consigliati per la lettura dei metadati.
 
 ## 🗂️ Struttura del progetto
 
@@ -287,7 +287,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.0.2-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.0.3-1_all.deb
 ```
 
 ## ⚠️ Note operative
