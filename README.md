@@ -40,8 +40,12 @@ Dopo l’installazione, apri **Installatore Apk** dal menu delle applicazioni. I
 Il `PKGBUILD` in questa cartella costruisce il pacchetto dai sorgenti presenti nel progetto:
 
 ```bash
+tar -xzf installatore-apk-1.2.0-1-src.tar.gz
+cd installatore-apk-1.2.0-1
 makepkg -si
 ```
+
+L'archivio sorgente si genera con `./build-src.sh` e contiene il `PKGBUILD` insieme ai file che gli servono, perché da solo il `PKGBUILD` non basta.
 
 Dipendenze richieste: `python-gobject`, `gtk4`, `libadwaita`, `android-tools` e `librsvg`. `aapt2` è opzionale e serve solo per la lettura completa dei metadati dell’APK.
 
@@ -304,6 +308,7 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 ├── com.simonecompany.installatoreapk.desktop  # Launcher e integrazione MIME
 ├── build-deb.sh                  # Builder del pacchetto Debian (.deb)
 ├── build-rpm.sh                  # Builder del pacchetto Fedora (.rpm)
+├── build-src.sh                  # Archivio sorgente per Arch
 ├── PKGBUILD                      # Pacchetto Arch Linux
 ├── installatore-apk.spec          # Pacchetto Fedora
 ├── data/
