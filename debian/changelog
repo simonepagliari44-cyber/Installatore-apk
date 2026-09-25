@@ -1,5 +1,7 @@
-installatore-apk (1.0.0-1) unstable; urgency=medium
+installatore-apk (1.0.1-1) unstable; urgency=medium
 
-  * Initial release.
+  * Fix launching from the applications menu.
+  * Install missing runtime dependencies when possible.
+  * Rename the application to Installatore Apk.
 
- -- Installatore APK <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000
+ -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000

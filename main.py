@@ -64,9 +64,10 @@ else:
 
 
 APP_ID = "org.installatoreapk.Installer"
-APP_TITLE = "Installatore -apk"
+APP_TITLE = "Installatore Apk"
 APP_ICON_NAME = "installatore-apk"
 APP_ICON_FALLBACK = "application-x-executable-symbolic"
+PROJECT_URL = "https://github.com/simonepagliari44-cyber/Installatore-apk"
 PERMISSION_PREFIX = "android.permission."
 
 
@@ -708,6 +709,17 @@ class MainWindow(_ApplicationWindowBase):
         self.stack.set_vexpand(True)
         self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
         root.append(self.stack)
+
+        footer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        footer.set_halign(Gtk.Align.CENTER)
+        footer.set_margin_top(6)
+        footer.set_margin_bottom(10)
+        self.website_button = Gtk.LinkButton()
+        self.website_button.set_uri(PROJECT_URL)
+        self.website_button.set_label("Sito web del progetto")
+        self.website_button.set_tooltip_text(PROJECT_URL)
+        footer.append(self.website_button)
+        root.append(footer)
 
         empty_page = Adw.StatusPage()
         empty_page.set_icon_name(APP_ICON_NAME)

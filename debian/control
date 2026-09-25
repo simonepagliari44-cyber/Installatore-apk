@@ -1,19 +1,21 @@
 Package: installatore-apk
-Version: 1.0.0-1
+Version: 1.0.1-1
 Section: utils
 Priority: optional
 Architecture: all
-Maintainer: Installatore APK <installatore-apk@localhost>
-Depends: python3 (>= 3.9), python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1, adb, aapt | aapt2, desktop-file-utils, xdg-utils
-Description: Installatore APK
- Applicazione GTK4 per installare file APK su dispositivi Android tramite ADB.
- .
- Legge i metadati dell’APK, mostra i permessi dichiarati e permette di
- selezionare il dispositivo Android, installare il pacchetto e avviarlo al
- termine. Supporta dispositivi USB e wireless già associati ad ADB.
+Maintainer: Installatore Apk <installatore-apk@localhost>
+Homepage: https://github.com/simonepagliari44-cyber/Installatore-apk
+Depends: python3 (>= 3.9), python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1, adb, desktop-file-utils, xdg-utils
+Recommends: aapt | aapt2, policykit-1
+Description: Installatore Apk
+  Applicazione GTK4 per installare file APK su dispositivi Android tramite ADB.
+  .
+  Legge i metadati dell’APK, mostra i permessi dichiarati e permette di
+  selezionare il dispositivo Android, installare il pacchetto e avviarlo al
+  termine. Supporta dispositivi USB e wireless già associati ad ADB.
 Description-en: APK installer
- A GTK4 application for installing APK files on Android devices through ADB.
- .
- It reads APK metadata, displays declared permissions, lets you select an
- Android device, installs the package, and optionally launches it afterward.
- It supports USB devices and wireless devices already paired with ADB.
+  A GTK4 application for installing APK files on Android devices through ADB.
+  .
+  It reads APK metadata, displays declared permissions, lets you select an
+  Android device, installs the package, and optionally launches it afterward.
+  It supports USB devices and wireless devices already paired with ADB.

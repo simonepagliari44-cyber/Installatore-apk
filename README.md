@@ -1,9 +1,11 @@
 <div align="center">
-  <img src="data/installatore-apk.svg" width="96" alt="Icona Installatore -apk">
-  <h1>📦 Installatore -apk</h1>
+  <img src="data/installatore-apk.svg" width="96" alt="Icona Installatore Apk">
+  <h1>📦 Installatore Apk</h1>
   <p><strong>Installa APK sui dispositivi Android direttamente dal PC Linux.</strong></p>
   <p>Applicazione GTK4 + Libadwaita con supporto ADB, anteprima dei metadati e avvio dell’app installata.</p>
 </div>
+
+<p align="center"><a href="https://github.com/simonepagliari44-cyber/Installatore-apk">🌐 Sito web del progetto</a></p>
 
 ---
 
@@ -18,6 +20,7 @@
 - 🐧 Interfaccia GTK4/Libadwaita con tema chiaro o scuro del sistema.
 - 📦 Pacchetto Debian `.deb` pronto da installare.
 - 🧩 Fallback opzionale con `pyaxmlparser` quando `aapt`/`aapt2` non è disponibile.
+- 🌐 Link cliccabile al sito del progetto nella finestra e nei metadati del pacchetto.
 
 ## 🚀 Installazione rapida
 
@@ -26,10 +29,12 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.0.0-1_all.deb
+sudo apt install ./dist/installatore-apk_1.0.1-1_all.deb
 ```
 
-Dopo l’installazione, apri **Installatore -apk** dal menu delle applicazioni. Il launcher utilizza automaticamente `/usr/bin/python3` e `/usr/lib/installatore-apk/main.py`.
+`apt` installa automaticamente le dipendenze dichiarate. Se l’app viene avviata da un’installazione incompleta o con `dpkg -i`, il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e prova a installare le dipendenze mancanti con `apt-get` e `pkexec`, mostrando eventuali errori con `zenity` o notifiche di sistema.
+
+Dopo l’installazione, apri **Installatore Apk** dal menu delle applicazioni. Il launcher controlla l’ambiente Python, GTK4/Libadwaita e ADB, poi avvia `/usr/lib/installatore-apk/main.py` con `/usr/bin/python3`.
 
 ### 🧑‍💻 Esecuzione dalla sorgente
 
@@ -43,8 +48,11 @@ sudo apt install python3 python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb aapt xdg-uti
 Poi avvia l’applicazione dalla cartella del progetto:
 
 ```bash
-python3 main.py
+chmod +x installatore-apk
+./installatore-apk
 ```
+
+Il wrapper controlla le dipendenze e avvia `main.py`; per un controllo diretto puoi usare anche `python3 main.py`.
 
 Su Fedora:
 
@@ -75,7 +83,7 @@ sudo pacman -S python python-gobject gtk4 libadwaita android-tools aapt
 
 ### 2. 📂 Scegli un APK
 
-- Avvia **Installatore -apk**.
+- Avvia **Installatore Apk**.
 - Premi **📂 Sfoglia** e seleziona un file `.apk`.
 - In alternativa, fai doppio clic sull’APK dal file manager: l’app si aprirà già con il file selezionato.
 - Puoi anche avviarla da terminale:
@@ -140,9 +148,19 @@ L’app esegue le operazioni ADB in background e mostra lo stato nella finestra,
 
 ## 🐛 Risoluzione dei problemi
 
+### L’app non si apre dal menu
+
+Il nuovo launcher controlla automaticamente l’ambiente grafico e tenta di installare le dipendenze mancanti. Per verificare cosa succede, esegui il launcher da terminale:
+
+```bash
+installatore-apk
+```
+
+Se compare un errore di permessi, autorizza l’installazione con `pkexec` quando viene richiesto. Dopo l’aggiornamento del pacchetto, esci dalla sessione grafica e rientra per aggiornare il menu delle applicazioni.
+
 ### `gi` non è installato
 
-Installa i pacchetti PyGObject e le librerie GTK4:
+Il launcher tenta l’installazione automatica; in alternativa puoi installare manualmente i pacchetti PyGObject e le librerie GTK4:
 
 ```bash
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1
@@ -199,14 +217,14 @@ xdg-mime default installatore-apk.desktop application/vnd.android.package-archiv
 ### Installazione manuale dalla sorgente
 
 1. Copia `installatore-apk.desktop` in `~/.local/share/applications/`.
-2. Sostituisci nel campo `Exec` il percorso `/usr/lib/installatore-apk/main.py` con il percorso assoluto del tuo `main.py`.
+2. Sostituisci i campi `Exec` e `TryExec` con il percorso assoluto del wrapper `installatore-apk` nella cartella del progetto, per esempio `Exec=/home/utente/progetto/installatore-apk %f`.
 3. Copia `data/installatore-apk.svg` in `~/.local/share/icons/hicolor/scalable/apps/installatore-apk.svg`.
 4. Aggiorna le cache locali:
 
    ```bash
    cp installatore-apk.desktop ~/.local/share/applications/
    cp data/installatore-apk.svg ~/.local/share/icons/hicolor/scalable/apps/
-   chmod +x main.py
+   chmod +x main.py installatore-apk
    update-desktop-database ~/.local/share/applications 2>/dev/null || true
    gtk4-update-icon-cache -q -t -f ~/.local/share/icons/hicolor 2>/dev/null || gtk-update-icon-cache -q -t -f ~/.local/share/icons/hicolor 2>/dev/null || true
    ```
@@ -223,23 +241,25 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.0.0-1_all.deb
+dist/installatore-apk_1.0.1-1_all.deb
 ```
 
 Contenuto principale:
 
+- `/usr/bin/installatore-apk`
 - `/usr/lib/installatore-apk/main.py`
 - `/usr/share/applications/installatore-apk.desktop`
 - `/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg`
 - `/usr/share/doc/installatore-apk/README.md`
 
-Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `aapt`/`aapt2`.
+Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita e ADB; `aapt`/`aapt2` e `policykit-1` sono consigliati per la lettura dei metadati e l’installazione automatica delle dipendenze.
 
 ## 🗂️ Struttura del progetto
 
 ```text
 .
 ├── main.py                       # Applicazione e logica ADB
+├── installatore-apk              # Wrapper con controllo e auto-dipendenze
 ├── installatore-apk.desktop      # Launcher e integrazione MIME
 ├── build-deb.sh                  # Builder del pacchetto Debian
 ├── data/
@@ -267,7 +287,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.0.0-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.0.1-1_all.deb
 ```
 
 ## ⚠️ Note operative
