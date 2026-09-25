@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.0.8-1_all.deb
+sudo apt install ./dist/installatore-apk_1.0.9-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: se mancano GTK4, Libadwaita, ADB o `pkexec`, prova a installarli con `apt-get` senza richiedere comandi manuali. Se l’app viene avviata da un’installazione incompleta, anche il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e riprova l’installazione, mostrando eventuali errori con `zenity` o notifiche di sistema. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
@@ -250,7 +250,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.0.8-1_all.deb
+dist/installatore-apk_1.0.9-1_all.deb
 ```
 
 Contenuto principale:
@@ -259,7 +259,6 @@ Contenuto principale:
 - `/usr/lib/installatore-apk/main.py`
 - `/usr/share/applications/com.simonecompany.installatoreapk.desktop`
 - `/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg`
-- `/usr/share/installatore-apk/download-box.svg` e `download-box-active.svg`
 - `/usr/share/doc/installatore-apk/README.md`
 
 Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-1`; `aapt`/`aapt2` sono consigliati per la lettura dei metadati.
@@ -273,9 +272,7 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 ├── com.simonecompany.installatoreapk.desktop  # Launcher e integrazione MIME
 ├── build-deb.sh                  # Builder del pacchetto Debian
 ├── data/
-│   ├── installatore-apk.svg      # Icona vettoriale dell’app
-│   ├── download-box.svg          # Indicatore download (freccia in alto)
-│   └── download-box-active.svg   # Indicatore download (freccia nella cassetta)
+│   └── installatore-apk.svg      # Icona vettoriale dell’app
 ├── debian/
 │   ├── changelog                 # Versione del pacchetto
 │   ├── control                   # Metadati e dipendenze
@@ -299,7 +296,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.0.8-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.0.9-1_all.deb
 ```
 
 ## ⚠️ Note operative
