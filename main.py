@@ -69,11 +69,11 @@ APP_ICON_FALLBACK = "application-x-executable-symbolic"
 PERMISSION_PREFIX = "android.permission."
 
 
-def _app_icon_path() -> Optional[str]:
+def _asset_path(name: str) -> Optional[str]:
     candidates = (
-        Path(__file__).resolve().parent / "data" / "installatore-apk.svg",
-        Path("/usr/share/installatore-apk/installatore-apk.svg"),
-        Path("/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg"),
+        Path(__file__).resolve().parent / "data" / name,
+        Path("/usr/share/installatore-apk") / name,
+        Path("/usr/share/icons/hicolor/scalable/apps") / name,
     )
     for candidate in candidates:
         if candidate.is_file():
@@ -81,14 +81,27 @@ def _app_icon_path() -> Optional[str]:
     return None
 
 
+def _set_image_from_asset(image: Any, name: str) -> bool:
+    path = _asset_path(name)
+    if path is None:
+        return False
+    try:
+        image.set_from_file(path)
+        return True
+    except Exception:
+        return False
+
+
 def _set_app_image(image: Any) -> None:
-    path = _app_icon_path()
-    if path is not None:
-        try:
-            image.set_from_file(path)
+    if _set_image_from_asset(image, "installatore-apk.svg"):
+        return
+    try:
+        theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+        if theme.has_icon(APP_ICON_NAME):
+            image.set_from_icon_name(APP_ICON_NAME)
             return
-        except Exception:
-            pass
+    except Exception:
+        pass
     image.set_from_icon_name(APP_ICON_FALLBACK)
 
 
@@ -715,8 +728,11 @@ class MainWindow(_ApplicationWindowBase):
 
         self.app_header_icon = Gtk.Image()
         _set_app_image(self.app_header_icon)
-        self.app_header_icon.set_pixel_size(26)
+        self.app_header_icon.set_pixel_size(28)
+        self.app_header_icon.set_size_request(28, 28)
         self.app_header_icon.set_valign(Gtk.Align.CENTER)
+        self.app_header_icon.set_halign(Gtk.Align.CENTER)
+        self.app_header_icon.set_tooltip_text(APP_TITLE)
         header.pack_start(self.app_header_icon)
 
         self.browse_button = Gtk.Button()
@@ -899,13 +915,14 @@ class MainWindow(_ApplicationWindowBase):
         )
         self.busy_box.set_halign(Gtk.Align.START)
         self.download_frame = Gtk.Frame()
-        self.download_frame.set_size_request(40, 40)
+        self.download_frame.set_size_request(44, 44)
         self.download_frame.set_valign(Gtk.Align.CENTER)
         self.download_frame.add_css_class("download-frame")
         self.download_icon = Gtk.Image()
-        self.download_icon.set_from_icon_name("folder-download-symbolic")
-        self.download_icon.set_pixel_size(24)
+        self.download_icon.set_pixel_size(26)
         self.download_frame.set_child(self.download_icon)
+        self._download_active = False
+        self._set_download_image(False)
         self.busy_label = Gtk.Label(label="Lettura del file APK…")
         self.busy_label.set_wrap(True)
         self.busy_label.add_css_class("busy-label")
@@ -1364,11 +1381,22 @@ class MainWindow(_ApplicationWindowBase):
         except OSError:
             pass
 
+    def _set_download_image(self, active: bool) -> None:
+        self._download_active = active
+        name = "download-box-active.svg" if active else "download-box.svg"
+        if _set_image_from_asset(self.download_icon, name):
+            return
+        self.download_icon.set_from_icon_name("folder-download-symbolic")
+
     def _toggle_pulse(self) -> bool:
+        if not self.busy_box.get_visible():
+            self._set_pulse(False)
+            return GLib.SOURCE_REMOVE
         if "is-pulsing" in self.download_frame.get_css_classes():
             self.download_frame.remove_css_class("is-pulsing")
         else:
             self.download_frame.add_css_class("is-pulsing")
+        self._set_download_image(not self._download_active)
         return GLib.SOURCE_CONTINUE
 
     def _set_pulse(self, active: bool) -> None:
@@ -1378,8 +1406,9 @@ class MainWindow(_ApplicationWindowBase):
         if not active:
             if "is-pulsing" in self.download_frame.get_css_classes():
                 self.download_frame.remove_css_class("is-pulsing")
+            self._set_download_image(False)
             return
-        self._pulse_source_id = GLib.timeout_add(700, self._toggle_pulse)
+        self._pulse_source_id = GLib.timeout_add(280, self._toggle_pulse)
 
     def _set_busy(self, visible: bool, message: str) -> None:
         self.busy_box.set_visible(visible)
@@ -1464,12 +1493,35 @@ class MainWindow(_ApplicationWindowBase):
         return False
 
 
+def _find_apk_in_current_directory() -> Optional[str]:
+    try:
+        entries = sorted(os.listdir("."))
+    except OSError:
+        return None
+    candidates = [
+        name for name in entries if name.lower().endswith(".apk")
+    ]
+    if len(candidates) != 1:
+        return None
+    return os.path.abspath(candidates[0])
+
+
 def _parse_arguments(arguments: Optional[Sequence[str]]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=APP_TITLE)
+    parser = argparse.ArgumentParser(
+        prog="installatore-apk",
+        description=APP_TITLE,
+        epilog=(
+            "Invocato senza percorso usa l'unico file .apk presente "
+            "nella cartella corrente."
+        ),
+    )
     parser.add_argument(
         "apk",
         nargs="?",
-        help="percorso del file APK da installare",
+        help=(
+            "file APK da installare; se omesso viene usato "
+            "l'APK nella cartella corrente"
+        ),
     )
     values, _unknown = parser.parse_known_args(
         list(arguments) if arguments is not None else None
@@ -1488,11 +1540,12 @@ def main(arguments: Optional[Sequence[str]] = None) -> int:
         print(f"Dettaglio: {GI_IMPORT_ERROR}", file=sys.stderr)
         return 1
 
+    apk_path = parsed.apk or _find_apk_in_current_directory()
     application = InstallerApplication()
     run_arguments = [sys.argv[0]]
-    if parsed.apk:
-        application.initial_apk = parsed.apk
-        run_arguments.append(parsed.apk)
+    if apk_path:
+        application.initial_apk = apk_path
+        run_arguments.append(apk_path)
     return application.run(run_arguments)
 
 

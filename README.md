@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.0.5-1_all.deb
+sudo apt install ./dist/installatore-apk_1.0.6-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: se mancano GTK4, Libadwaita, ADB o `pkexec`, prova a installarli con `apt-get` senza richiedere comandi manuali. Se l’app viene avviata da un’installazione incompleta, anche il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e riprova l’installazione, mostrando eventuali errori con `zenity` o notifiche di sistema. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
@@ -49,7 +49,7 @@ chmod +x installatore-apk
 ./installatore-apk
 ```
 
-Il wrapper controlla le dipendenze e avvia `main.py`; per un controllo diretto puoi usare anche `python3 main.py`.
+Il wrapper controlla le dipendenze e avvia `main.py`; la CLI è il comando `installatore-apk`, quindi l’app si usa sempre tramite quello.
 
 Su Fedora:
 
@@ -62,6 +62,22 @@ Su Arch Linux:
 ```bash
 sudo pacman -S python python-gobject gtk4 libadwaita android-tools aapt
 ```
+
+## 💻 CLI `installatore-apk`
+
+Il comando installato è `installatore-apk` e funziona anche senza percorso: se non indica il file, l’app prende in automatico **l’unico `.apk` presente nella cartella corrente**.
+
+```bash
+installatore-apk                 # usa l'unico .apk della cartella corrente
+installatore-apk /percorso/file.apk   # installa un APK specifico
+```
+
+Regole:
+
+- nessun argomento: si usa l’unico file `.apk` della directory corrente;
+- un argomento: viene usato quel percorso, relativo o assoluto;
+- più di un `.apk` nella cartella corrente senza argomento: l’app si apre vuota e scegli il file con **📂 Sfoglia**;
+- dalla sorgente il comando è `./installatore-apk`, che esegue lo stesso wrapper.
 
 ## 🧭 Come si usa
 
@@ -83,11 +99,7 @@ sudo pacman -S python python-gobject gtk4 libadwaita android-tools aapt
 - Avvia **Installatore Apk**.
 - Premi **📂 Sfoglia** e seleziona un file `.apk`.
 - In alternativa, fai doppio clic sull’APK dal file manager: l’app si aprirà già con il file selezionato.
-- Puoi anche avviarla da terminale:
-
-  ```bash
-  python3 main.py /percorso/del/file.apk
-  ```
+- Oppure usa la CLI `installatore-apk` descritta qui sotto.
 
 L’app mostra il nome, il package, la versione, il percorso del file e i permessi dichiarati.
 
@@ -208,18 +220,18 @@ Controlla che:
 Il pacchetto Debian registra automaticamente l’associazione per `application/vnd.android.package-archive`. Se il file manager non la imposta automaticamente:
 
 ```bash
-xdg-mime default installatore-apk.desktop application/vnd.android.package-archive
+xdg-mime default com.simonecompany.installatoreapk.desktop application/vnd.android.package-archive
 ```
 
 ### Installazione manuale dalla sorgente
 
-1. Copia `installatore-apk.desktop` in `~/.local/share/applications/`.
+1. Copia `com.simonecompany.installatoreapk.desktop` in `~/.local/share/applications/`.
 2. Sostituisci i campi `Exec` e `TryExec` con il percorso assoluto del wrapper `installatore-apk` nella cartella del progetto, per esempio `Exec=/home/utente/progetto/installatore-apk %f`.
 3. Copia `data/installatore-apk.svg` in `~/.local/share/icons/hicolor/scalable/apps/installatore-apk.svg`.
 4. Aggiorna le cache locali:
 
    ```bash
-   cp installatore-apk.desktop ~/.local/share/applications/
+   cp com.simonecompany.installatoreapk.desktop ~/.local/share/applications/
    cp data/installatore-apk.svg ~/.local/share/icons/hicolor/scalable/apps/
    chmod +x main.py installatore-apk
    update-desktop-database ~/.local/share/applications 2>/dev/null || true
@@ -238,15 +250,16 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.0.5-1_all.deb
+dist/installatore-apk_1.0.6-1_all.deb
 ```
 
 Contenuto principale:
 
 - `/usr/bin/installatore-apk`
 - `/usr/lib/installatore-apk/main.py`
-- `/usr/share/applications/installatore-apk.desktop`
+- `/usr/share/applications/com.simonecompany.installatoreapk.desktop`
 - `/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg`
+- `/usr/share/installatore-apk/download-box.svg` e `download-box-active.svg`
 - `/usr/share/doc/installatore-apk/README.md`
 
 Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-1`; `aapt`/`aapt2` sono consigliati per la lettura dei metadati.
@@ -257,10 +270,12 @@ Il pacchetto dichiara dipendenze per Python, GTK4, Libadwaita, ADB e `policykit-
 .
 ├── main.py                       # Applicazione e logica ADB
 ├── installatore-apk              # Wrapper con controllo e auto-dipendenze
-├── installatore-apk.desktop      # Launcher e integrazione MIME
+├── com.simonecompany.installatoreapk.desktop  # Launcher e integrazione MIME
 ├── build-deb.sh                  # Builder del pacchetto Debian
 ├── data/
-│   └── installatore-apk.svg      # Icona vettoriale dell’app
+│   ├── installatore-apk.svg      # Icona vettoriale dell’app
+│   ├── download-box.svg          # Indicatore download (freccia in alto)
+│   └── download-box-active.svg   # Indicatore download (freccia nella cassetta)
 ├── debian/
 │   ├── changelog                 # Versione del pacchetto
 │   ├── control                   # Metadati e dipendenze
@@ -284,7 +299,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.0.5-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.0.6-1_all.deb
 ```
 
 ## ⚠️ Note operative

@@ -1,10 +1,13 @@
-installatore-apk (1.0.5-1) unstable; urgency=medium
+installatore-apk (1.0.6-1) unstable; urgency=medium
 
-  * Show the app icon in the header bar and keep the device refresh
-    button only on the APK installation screen.
-  * Replace the busy spinner with a download indicator and show a green
-    check with "Fatto!" when the installation completes.
+  * Add the installatore-apk CLI: without arguments it uses the single
+    .apk file found in the current directory.
+  * Replace the stock download icon with a custom box-and-down-arrow
+    indicator that animates while the installation runs.
+  * Show the app icon in the header bar and match the desktop entry to
+    the com.simonecompany.installatoreapk application id so the system
+    bar no longer shows a generic icon.
+  * Show a green check with "Fatto!" when the installation completes.
   * Remove the project website link from the window and the README.
-  * Set the application id to com.simonecompany.installatoreapk.
 
  -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000

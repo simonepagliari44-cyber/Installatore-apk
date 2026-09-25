@@ -8,6 +8,7 @@ Exec=/usr/bin/installatore-apk %f
 TryExec=/usr/bin/installatore-apk
 Icon=installatore-apk
 Terminal=false
+StartupWMClass=com.simonecompany.installatoreapk
 Categories=Utility;System;
 MimeType=application/vnd.android.package-archive;
 Keywords=apk;android;adb;installer;
