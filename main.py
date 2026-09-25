@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import getpass
 import importlib
+import math
 import os
 import queue
 import re
@@ -27,12 +28,9 @@ Pango: Any
 GI_IMPORT_ERROR: Any
 
 DOWNLOAD_IMAGE_NAMES = ("download.svg", "download.png")
-DOWNLOAD_ICON_NAMES = (
-    "folder-download-symbolic",
-    "emblem-download-symbolic",
-    "go-down-symbolic",
-    "system-software-install-symbolic",
-)
+LINE_CAP_ROUND = 1
+LINE_JOIN_ROUND = 1
+DOWNLOAD_COLOR = (230 / 255, 97 / 255, 0 / 255)
 
 try:
     gi = importlib.import_module("gi")
@@ -1449,24 +1447,62 @@ class MainWindow(_ApplicationWindowBase):
         for name in DOWNLOAD_IMAGE_NAMES:
             if _set_image_from_asset(self.download_area, name):
                 return
-        try:
-            display = Gdk.Display.get_default()
-            theme = (
-                Gtk.IconTheme.get_for_display(display)
-                if display is not None
-                else None
-            )
-        except Exception:
-            theme = None
-        if theme is not None:
-            for name in DOWNLOAD_ICON_NAMES:
-                try:
-                    if theme.has_icon(name):
-                        self.download_area.set_from_icon_name(name)
-                        return
-                except Exception:
-                    continue
-        self.download_area.set_from_icon_name(DOWNLOAD_ICON_NAMES[0])
+        self._install_causal_drawer()
+
+    def _install_causal_drawer(self) -> None:
+        drawer = Gtk.DrawingArea()
+        drawer.set_content_width(24)
+        drawer.set_content_height(24)
+        drawer.set_draw_func(self._draw_download)
+        self.download_area = drawer
+        self.download_frame.set_child(drawer)
+
+    def _draw_download(
+        self, _area: Any, cr: Any, width: int, height: int
+    ) -> None:
+        size = float(min(width, height))
+        if size <= 0:
+            return
+        cr.set_source_rgb(*DOWNLOAD_COLOR)
+        cr.set_line_width(max(2.0, size * 0.1))
+        cr.set_line_cap(LINE_CAP_ROUND)
+        cr.set_line_join(LINE_JOIN_ROUND)
+
+        left = size * 0.19
+        right = size * 0.81
+        top = size * 0.46
+        bottom = size * 0.86
+        radius = size * 0.12
+        cr.new_sub_path()
+        cr.move_to(left, top)
+        cr.line_to(left, bottom - radius)
+        cr.arc(
+            left + radius,
+            bottom - radius,
+            radius,
+            math.pi,
+            1.5 * math.pi,
+        )
+        cr.line_to(right - radius, bottom)
+        cr.arc(
+            right - radius,
+            bottom - radius,
+            radius,
+            1.5 * math.pi,
+            2 * math.pi,
+        )
+        cr.line_to(right, top)
+        cr.stroke()
+
+        center = size * 0.5
+        cr.move_to(center, size * 0.10)
+        cr.line_to(center, size * 0.40)
+        cr.stroke()
+        head = size * 0.17
+        cr.move_to(center - head, size * 0.30)
+        cr.line_to(center, size * 0.40)
+        cr.line_to(center + head, size * 0.30)
+        cr.stroke()
 
     def _toggle_pulse(self) -> bool:
         if not self.busy_box.get_visible():

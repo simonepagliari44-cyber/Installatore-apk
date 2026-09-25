@@ -26,7 +26,7 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.1.3-1_all.deb
+sudo apt install ./dist/installatore-apk_1.1.4-1_all.deb
 ```
 
 L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK4, Libadwaita, ADB, il loader SVG e `aapt` e installa **solo ciò che manca davvero**, una volta sola, chiedendo la password di amministratore in quel momento. Se le dipendenze sono già tutte presenti non viene eseguito alcun `apt-get`.
@@ -258,7 +258,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.1.3-1_all.deb
+dist/installatore-apk_1.1.4-1_all.deb
 ```
 
 Contenuto principale:
@@ -307,7 +307,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.1.3-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.1.4-1_all.deb
 ```
 
 ## ⚠️ Note operative
