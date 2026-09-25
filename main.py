@@ -81,12 +81,22 @@ def _asset_path(name: str) -> Optional[str]:
     return None
 
 
+def _load_texture(path: str) -> Any:
+    try:
+        return Gdk.Texture.new_from_file(path)
+    except Exception:
+        return None
+
+
 def _set_image_from_asset(image: Any, name: str) -> bool:
     path = _asset_path(name)
     if path is None:
         return False
+    texture = _load_texture(path)
+    if texture is None:
+        return False
     try:
-        image.set_from_file(path)
+        image.set_from_paintable(texture)
         return True
     except Exception:
         return False

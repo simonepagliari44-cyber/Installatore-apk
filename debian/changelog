@@ -1,7 +1,11 @@
 installatore-apk (1.0.7-1) unstable; urgency=medium
 
-  * Translate the package description to Italian and drop the English
-    variant so every software centre shows the Italian text.
+  * Add translated package descriptions (it, en, de, fr, es, pt) so the
+    software centre shows the text matching the system language, keeping
+    the Italian title in every variant.
+  * Install librsvg2-common (SVG loader) so the app icon and the download
+    indicator actually render instead of showing an empty image.
+  * Detect a failed texture load and fall back to a symbolic icon.
   * Use the requested orange download icon inside an orange rounded
     square for the installation progress indicator.
   * Add the installatore-apk CLI: without arguments it uses the single

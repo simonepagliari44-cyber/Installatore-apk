@@ -5,7 +5,7 @@ Priority: optional
 Architecture: all
 Maintainer: Installatore Apk <installatore-apk@localhost>
 Homepage: https://github.com/simonepagliari44-cyber/Installatore-apk
-Depends: python3 (>= 3.9), python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1, adb, desktop-file-utils, xdg-utils, policykit-1
+Depends: python3 (>= 3.9), python3-gi, python3-cairo, gir1.2-gtk-4.0, gir1.2-adw-1, librsvg2-common, adb, desktop-file-utils, xdg-utils, policykit-1
 Recommends: aapt | aapt2
 Description: Installatore Apk per Android via ADB
  Applicazione GTK4 + Libadwaita per installare file APK su dispositivi
@@ -18,3 +18,68 @@ Description: Installatore Apk per Android via ADB
  Supporta dispositivi USB e wireless già associati ad ADB, include
  l’anteprima dei permessi e la possibilità di annullare
  l’installazione in corso.
+Description-it: Installatore Apk per Android via ADB
+ Applicazione GTK4 + Libadwaita per installare file APK su dispositivi
+ Android tramite ADB, scritta in Python.
+ .
+ Legge i metadati dell’APK (nome, package, versione e icona), mostra i
+ permessi dichiarati e permette di selezionare il dispositivo Android
+ di destinazione, installare il pacchetto e avviarlo al termine.
+ .
+ Supporta dispositivi USB e wireless già associati ad ADB, include
+ l’anteprima dei permessi e la possibilità di annullare
+ l’installazione in corso.
+Description-en: Installatore Apk per Android via ADB
+ A GTK4 and Libadwaita application that installs APK files on Android
+ devices over ADB, written in Python.
+ .
+ It reads APK metadata (name, package, version and icon), shows the
+ declared permissions and lets you pick the target Android device,
+ install the package and launch it afterwards.
+ .
+ It supports USB and wireless devices already paired with ADB, includes
+ a permissions preview and allows cancelling a running installation.
+Description-de: Installatore Apk für Android über ADB
+ Eine GTK4- und Libadwaita-Anwendung, die APK-Dateien über ADB auf
+ Android-Geräten installiert, geschrieben in Python.
+ .
+ Sie liest die APK-Metadaten (Name, Paket, Version und Symbol), zeigt die
+ angegebenen Berechtigungen und erlaubt es, das Zielgerät auszuwählen,
+ das Paket zu installieren und anschließend zu starten.
+ .
+ Sie unterstützt USB- und drahtlose Geräte, die bereits mit ADB
+ gekoppelt sind, bietet eine Vorschau der Berechtigungen und erlaubt es,
+ eine laufende Installation abzubrechen.
+Description-fr: Installatore Apk pour Android via ADB
+ Une application GTK4 et Libadwaita qui installe des fichiers APK sur les
+ appareils Android via ADB, écrite en Python.
+ .
+ Elle lit les métadonnées de l’APK (nom, paquet, version et icône),
+ affiche les permissions déclarées et permet de choisir l’appareil
+ Android cible, d’installer le paquet puis de le lancer.
+ .
+ Elle prend en charge les appareils USB et sans fil déjà associés à ADB,
+ propose un aperçu des permissions et permet d’annuler une installation
+ en cours.
+Description-es: Installatore Apk para Android mediante ADB
+ Una aplicación GTK4 y Libadwaita que instala archivos APK en dispositivos
+ Android mediante ADB, escrita en Python.
+ .
+ Lee los metadatos del APK (nombre, paquete, versión e icono), muestra los
+ permisos declarados y permite elegir el dispositivo Android de destino,
+ instalar el paquete y lanzarlo al terminar.
+ .
+ Compatible con dispositivos USB e inalámbricos ya asociados a ADB,
+ incluye una vista previa de los permisos y permite cancelar una
+ instalación en curso.
+Description-pt: Installatore Apk para Android via ADB
+ Uma aplicação GTK4 e Libadwaita que instala ficheiros APK em dispositivos
+ Android através do ADB, escrita em Python.
+ .
+ Lê os metadados do APK (nome, pacote, versão e ícone), mostra as
+ permissões declaradas e permite escolher o dispositivo Android de
+ destino, instalar o pacote e iniciá-lo no final.
+ .
+ Suporta dispositivos USB e sem fios já associados ao ADB, inclui a
+ pré-visualização das permissões e permite cancelar uma instalação em
+ curso.
