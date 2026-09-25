@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+has_svg_loader() {
+    for loader in /usr/lib/*/gdk-pixbuf-2.0/*/loaders/libpixbufloader-svg.so; do
+        [ -e "$loader" ] && return 0
+    done
+    return 1
+}
+
+collect_missing_dependencies() {
+    missing=""
+    if ! command -v python3 >/dev/null 2>&1; then
+        missing="python3 python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb xdg-utils desktop-file-utils policykit-1"
+        printf '%s' "$missing"
+        return 0
+    fi
+    if ! python3 -c 'import gi, importlib; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); importlib.import_module("gi.repository.Gtk"); importlib.import_module("gi.repository.Adw")' >/dev/null 2>&1; then
+        missing="$missing python3-gi gir1.2-gtk-4.0 gir1.2-adw-1"
+    fi
+    command -v adb >/dev/null 2>&1 || missing="$missing adb"
+    command -v xdg-open >/dev/null 2>&1 || missing="$missing xdg-utils"
+    command -v update-desktop-database >/dev/null 2>&1 || missing="$missing desktop-file-utils"
+    has_svg_loader || missing="$missing librsvg2-common"
+    if command -v apt-cache >/dev/null 2>&1; then
+        if apt-cache show aapt >/dev/null 2>&1; then
+            command -v aapt >/dev/null 2>&1 || missing="$missing aapt"
+        elif apt-cache show aapt2 >/dev/null 2>&1; then
+            command -v aapt2 >/dev/null 2>&1 || missing="$missing aapt2"
+        fi
+    fi
+    printf '%s' "$missing"
+}
+
+missing=$(collect_missing_dependencies)
+if [ -n "$missing" ] && command -v apt-get >/dev/null 2>&1; then
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $missing >/dev/null 2>&1 || true
+fi
+
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database -q /usr/share/applications || true
+fi
+
+if command -v gtk4-update-icon-cache >/dev/null 2>&1; then
+    gtk4-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+elif command -v gtk-update-icon-cache >/dev/null 2>&1; then
+    gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor || true
+fi
+
+exit 0

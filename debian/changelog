@@ -1,0 +1,69 @@
+installatore-apk (1.3.0-1) unstable; urgency=medium
+
+  * Replace the Fedora RPM with install.sh inside the source archive, and
+    drop build-rpm.sh and the RPM spec.
+  * Add Arch Linux packaging through PKGBUILD and Fedora packaging
+    through an RPM spec plus build-rpm.sh, installing the same layout.
+  * Make the launcher look for the application in the Fedora and Arch
+    locations and suggest the right package manager when dependencies
+    are missing.
+  * Restore the emoji headings in the README.
+  * Remove the icon from the "Installa" button: system-software-install-symbolic
+    renders as a rectangle with lines inside (a SIM card / a book) in the
+    default icon theme, and it was the symbol left in the orange button.
+  * Show the "Installa" label in the orange box during the install, and
+    drop the download icon entirely together with its assets and drawing
+    code, so no icon theme can substitute an unrelated symbol.
+  * Show the running version in the window, so it is immediately visible
+    an unrelated symbol depending on the installed theme. The indicator now
+    resolves SVG, then PNG, then a Cairo drawing, so it can never end up
+    showing a stock icon.
+
+ -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000
+    whether an old installation is still being launched.
+  * Load the download glyph from SVG through librsvg, keeping the PNG as
+    a fallback when the SVG loader is unavailable.
+  * Ship the orange download glyph as a PNG and load it directly, instead
+    of relying on theme icon names: depending on the icon theme the box
+    could show an unrelated symbol. The PNG needs no SVG loader.
+  * Remove the previously built .deb files on every build, so dist/ only
+    ever holds the current package.
+  * Stop asking for administrator authentication on every launch: the
+    launcher no longer installs anything and never calls pkexec, it only
+    reports the missing packages. It was prompting for a password on each
+    start because the SVG loader check could never pass (it needed a
+    GdkPixbuf typelib that the launcher did not install).
+  * Run apt-get from postinst only when something is genuinely missing.
+  * Use the standard GNOME download icon (folder-download-symbolic) in
+    the orange installation indicator.
+  * Report a clear message, with the one-time plugdev command, when USB
+    access is denied, so the app never needs root to work.
+  * Use a standard GTK4 download icon for the installation indicator
+    instead of a hand-drawn one, picking the first name available in the
+    current icon theme.
+  * Stop tracking the generated dist/ folder in git and add a .gitignore
+    for build artefacts.
+  * Drop python3-cairo from the dependencies, no longer needed.
+  * Draw the download indicator with Cairo instead of loading an SVG, so
+    the orange tray-and-arrow icon shows even without the librsvg loader
+    (the standard GNOME icon used to appear in its place).
+  * Redraw the download indicator as a readable orange outline (tray plus
+    downward arrow): the previous artwork filled the whole 40x29 canvas
+    and rendered as a solid orange block.
+  * Add translated package descriptions (it, en, de, fr, es, pt) so the
+    software centre shows the text matching the system language, keeping
+    the Italian title in every variant.
+  * Install librsvg2-common (SVG loader) so the app icon and the download
+    indicator actually render instead of showing an empty image.
+  * Detect a failed texture load and fall back to a symbolic icon.
+  * Use the requested orange download icon inside an orange rounded
+    square for the installation progress indicator.
+  * Add the installatore-apk CLI: without arguments it uses the single
+    .apk file found in the current directory.
+  * Show the app icon in the header bar and match the desktop entry to
+    the com.simonecompany.installatoreapk application id so the system
+    bar no longer shows a generic icon.
+  * Show a green check with "Fatto!" when the installation completes.
+  * Remove the project website link from the window and the README.
+
+ -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000
