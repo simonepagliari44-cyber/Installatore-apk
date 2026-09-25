@@ -5,3 +5,13 @@ __pycache__/
 .rpmbuild/
 .rpmbuild-src/
 .srcbuild/
+
+# File di packaging e build: presenti in locale, non tracciati.
+PKGBUILD
+install.sh
+installatore-apk
+build-deb.sh
+build-src.sh
+com.simonecompany.installatoreapk.desktop
+data/
+debian/
