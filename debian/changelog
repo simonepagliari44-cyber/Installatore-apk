@@ -1,5 +1,9 @@
-installatore-apk (1.1.2-1) unstable; urgency=medium
+installatore-apk (1.1.3-1) unstable; urgency=medium
 
+  * Show the running version in the window, so it is immediately visible
+    whether an old installation is still being launched.
+  * Load the download glyph from SVG through librsvg, keeping the PNG as
+    a fallback when the SVG loader is unavailable.
   * Ship the orange download glyph as a PNG and load it directly, instead
     of relying on theme icon names: depending on the icon theme the box
     could show an unrelated symbol. The PNG needs no SVG loader.

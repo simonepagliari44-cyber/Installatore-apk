@@ -26,7 +26,7 @@ Gtk: Any
 Pango: Any
 GI_IMPORT_ERROR: Any
 
-DOWNLOAD_IMAGE_NAME = "download.png"
+DOWNLOAD_IMAGE_NAMES = ("download.svg", "download.png")
 DOWNLOAD_ICON_NAMES = (
     "folder-download-symbolic",
     "emblem-download-symbolic",
@@ -76,6 +76,20 @@ APP_TITLE = "Installatore Apk"
 APP_ICON_NAME = "installatore-apk"
 APP_ICON_FALLBACK = "application-x-executable-symbolic"
 PERMISSION_PREFIX = "android.permission."
+
+
+def _app_version() -> str:
+    for candidate in (
+        Path(__file__).resolve().parent / "VERSION",
+        Path("/usr/share/installatore-apk/VERSION"),
+    ):
+        try:
+            text = candidate.read_text(encoding="utf-8").strip()
+        except OSError:
+            continue
+        if text:
+            return f"v{text}"
+    return "sviluppo"
 
 
 def _asset_path(name: str) -> Optional[str]:
@@ -875,9 +889,21 @@ class MainWindow(_ApplicationWindowBase):
         self.device_status_label = Gtk.Label(label="Ricerca dei dispositivi…")
         self.device_status_label.set_xalign(0)
         self.device_status_label.set_wrap(True)
+        self.device_status_label.set_hexpand(True)
         self.device_status_label.add_css_class("dim-label")
         self.device_status_label.set_margin_start(4)
-        content.append(self.device_status_label)
+
+        self.build_label = Gtk.Label(label=_app_version())
+        self.build_label.set_valign(Gtk.Align.CENTER)
+        self.build_label.add_css_class("dim-label")
+        self.build_label.add_css_class("caption")
+
+        status_row = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=12
+        )
+        status_row.append(self.device_status_label)
+        status_row.append(self.build_label)
+        content.append(status_row)
 
     def _build_permissions_section(self, content: Any) -> None:
         if hasattr(Adw, "ExpanderRow"):
@@ -1420,8 +1446,9 @@ class MainWindow(_ApplicationWindowBase):
             pass
 
     def _set_download_icon(self) -> None:
-        if _set_image_from_asset(self.download_area, DOWNLOAD_IMAGE_NAME):
-            return
+        for name in DOWNLOAD_IMAGE_NAMES:
+            if _set_image_from_asset(self.download_area, name):
+                return
         try:
             display = Gdk.Display.get_default()
             theme = (
