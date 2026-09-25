@@ -23,8 +23,15 @@ check_gui() {
     "$python_bin" -c 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); from gi.repository import Gtk, Adw' >/dev/null 2>&1
 }
 
-check_runtime() {
-    check_gui && command -v "$adb_command" >/dev/null 2>&1
+install_dependencies() {
+    dependencies="python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb xdg-utils desktop-file-utils"
+    if command -v apt-get >/dev/null 2>&1; then
+        if [ "$(id -u)" -eq 0 ]; then
+            apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true
+        elif command -v pkexec >/dev/null 2>&1; then
+            pkexec apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true
+        fi
+    fi
 }
 
 if [ ! -x "$python_bin" ]; then
@@ -37,19 +44,12 @@ if [ ! -f "$main_script" ]; then
     exit 1
 fi
 
-if ! check_runtime; then
-    dependencies="python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb xdg-utils desktop-file-utils"
-    if command -v apt-get >/dev/null 2>&1; then
-        if [ "$(id -u)" -eq 0 ]; then
-            apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true
-        elif command -v pkexec >/dev/null 2>&1; then
-            pkexec apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true
-        fi
-    fi
+if ! check_gui || ! command -v "$adb_command" >/dev/null 2>&1; then
+    install_dependencies
 fi
 
-if ! check_runtime; then
-    show_error "Dipendenze mancanti. Installa python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1 e adb, poi riavvia l'applicazione."
+if ! check_gui; then
+    show_error "Dipendenze grafiche mancanti. Installa python3-gi, gir1.2-gtk-4.0 e gir1.2-adw-1, poi riavvia l'applicazione."
     exit 1
 fi
 

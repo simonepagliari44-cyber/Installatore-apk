@@ -1,7 +1,5 @@
-installatore-apk (1.0.1-1) unstable; urgency=medium
+installatore-apk (1.0.2-1) unstable; urgency=medium
 
-  * Fix launching from the applications menu.
-  * Install missing runtime dependencies when possible.
-  * Rename the application to Installatore Apk.
+  * Do not block the graphical interface when ADB is unavailable.
 
  -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000
