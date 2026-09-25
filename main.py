@@ -62,11 +62,10 @@ else:
     _ApplicationWindowBase = Adw.ApplicationWindow
 
 
-APP_ID = "org.installatoreapk.Installer"
+APP_ID = "com.simonecompany.installatoreapk"
 APP_TITLE = "Installatore Apk"
 APP_ICON_NAME = "installatore-apk"
 APP_ICON_FALLBACK = "application-x-executable-symbolic"
-PROJECT_URL = "https://github.com/simonepagliari44-cyber/Installatore-apk"
 PERMISSION_PREFIX = "android.permission."
 
 
@@ -632,6 +631,26 @@ class InstallerApplication(_ApplicationBase):
         .busy-label {
             font-weight: 600;
         }
+        .download-frame {
+            border-radius: 14px;
+        }
+        .download-frame > contents {
+            border-radius: 14px;
+            background: alpha(currentColor, 0.08);
+        }
+        .download-frame.is-pulsing > contents {
+            background: alpha(currentColor, 0.22);
+        }
+        .success-icon-frame {
+            background: #26a269;
+        }
+        .success-icon-frame > contents {
+            border-radius: 14px;
+        }
+        .success-label {
+            color: #26a269;
+            font-weight: 700;
+        }
         """
         try:
             provider = Gtk.CssProvider()
@@ -667,6 +686,7 @@ class MainWindow(_ApplicationWindowBase):
         self.adb_error: Optional[str] = None
         self._install_process: Optional[subprocess.Popen] = None
         self._install_process_lock = threading.Lock()
+        self._pulse_source_id = 0
         self._file_dialog: Optional[Any] = None
         self._file_chooser: Optional[Any] = None
         self.permission_rows: List[Any] = []
@@ -693,32 +713,22 @@ class MainWindow(_ApplicationWindowBase):
         self.window_title.set_subtitle("Installazione via ADB")
         header.set_title_widget(self.window_title)
 
+        self.app_header_icon = Gtk.Image()
+        _set_app_image(self.app_header_icon)
+        self.app_header_icon.set_pixel_size(26)
+        self.app_header_icon.set_valign(Gtk.Align.CENTER)
+        header.pack_start(self.app_header_icon)
+
         self.browse_button = Gtk.Button()
         self.browse_button.set_icon_name("document-open-symbolic")
         self.browse_button.set_tooltip_text("Seleziona un APK")
         header.pack_start(self.browse_button)
-
-        self.refresh_button = Gtk.Button()
-        self.refresh_button.set_icon_name("view-refresh-symbolic")
-        self.refresh_button.set_tooltip_text("Ricarica dispositivi")
-        header.pack_end(self.refresh_button)
         root.append(header)
 
         self.stack = Gtk.Stack()
         self.stack.set_vexpand(True)
         self.stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
         root.append(self.stack)
-
-        footer = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        footer.set_halign(Gtk.Align.CENTER)
-        footer.set_margin_top(6)
-        footer.set_margin_bottom(10)
-        self.website_button = Gtk.LinkButton()
-        self.website_button.set_uri(PROJECT_URL)
-        self.website_button.set_label("Sito web del progetto")
-        self.website_button.set_tooltip_text(PROJECT_URL)
-        footer.append(self.website_button)
-        root.append(footer)
 
         empty_page = Adw.StatusPage()
         empty_page.set_icon_name(APP_ICON_NAME)
@@ -815,6 +825,12 @@ class MainWindow(_ApplicationWindowBase):
         self.device_dropdown = Gtk.DropDown()
         self.device_dropdown.set_hexpand(True)
         self.device_row.add_suffix(self.device_dropdown)
+
+        self.refresh_button = Gtk.Button()
+        self.refresh_button.set_icon_name("view-refresh-symbolic")
+        self.refresh_button.set_tooltip_text("Ricarica dispositivi")
+        self.refresh_button.set_valign(Gtk.Align.CENTER)
+        self.device_row.add_suffix(self.refresh_button)
         device_group.add(self.device_row)
         content.append(device_group)
 
@@ -882,16 +898,21 @@ class MainWindow(_ApplicationWindowBase):
             orientation=Gtk.Orientation.HORIZONTAL, spacing=10
         )
         self.busy_box.set_halign(Gtk.Align.START)
-        self.spinner = Gtk.Spinner()
-        self.spinner.set_spinning(True)
-        self.spinner.set_size_request(22, 22)
+        self.download_frame = Gtk.Frame()
+        self.download_frame.set_size_request(40, 40)
+        self.download_frame.set_valign(Gtk.Align.CENTER)
+        self.download_frame.add_css_class("download-frame")
+        self.download_icon = Gtk.Image()
+        self.download_icon.set_from_icon_name("folder-download-symbolic")
+        self.download_icon.set_pixel_size(24)
+        self.download_frame.set_child(self.download_icon)
         self.busy_label = Gtk.Label(label="Lettura del file APK…")
         self.busy_label.set_wrap(True)
         self.busy_label.add_css_class("busy-label")
         self.cancel_button = Gtk.Button(label="Annulla")
         self.cancel_button.add_css_class("destructive-action")
         self.cancel_button.set_valign(Gtk.Align.CENTER)
-        self.busy_box.append(self.spinner)
+        self.busy_box.append(self.download_frame)
         self.busy_box.append(self.busy_label)
         self.busy_box.append(self.cancel_button)
         self.busy_box.set_visible(False)
@@ -915,6 +936,26 @@ class MainWindow(_ApplicationWindowBase):
         actions.append(self.change_button)
         actions.append(self.install_button)
         content.append(actions)
+
+        self.success_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL, spacing=10
+        )
+        self.success_box.set_halign(Gtk.Align.CENTER)
+        self.success_box.set_visible(False)
+        self.success_frame = Gtk.Frame()
+        self.success_frame.set_size_request(28, 28)
+        self.success_frame.set_valign(Gtk.Align.CENTER)
+        self.success_frame.add_css_class("success-icon-frame")
+        self.success_icon = Gtk.Image()
+        self.success_icon.set_from_icon_name("object-select-symbolic")
+        self.success_icon.set_pixel_size(18)
+        self.success_frame.set_child(self.success_icon)
+        self.success_label = Gtk.Label(label="Fatto!")
+        self.success_label.set_valign(Gtk.Align.CENTER)
+        self.success_label.add_css_class("success-label")
+        self.success_box.append(self.success_frame)
+        self.success_box.append(self.success_label)
+        content.append(self.success_box)
 
     def _connect_signals(self) -> None:
         self.browse_button.connect(
@@ -1020,6 +1061,7 @@ class MainWindow(_ApplicationWindowBase):
         self._clear_current_info()
         self.current_apk_path = expanded_path
         self.error_label.set_visible(False)
+        self.success_box.set_visible(False)
         self.metadata_token += 1
         token = self.metadata_token
         self.metadata_loading = True
@@ -1095,6 +1137,7 @@ class MainWindow(_ApplicationWindowBase):
         token = self.install_token
         self.installing = True
         self.error_label.set_visible(False)
+        self.success_box.set_visible(False)
         self._set_busy(True, f"Installazione su {device.display_name}…")
         self._update_controls()
         apk_info = self.current_info
@@ -1321,14 +1364,29 @@ class MainWindow(_ApplicationWindowBase):
         except OSError:
             pass
 
+    def _toggle_pulse(self) -> bool:
+        if "is-pulsing" in self.download_frame.get_css_classes():
+            self.download_frame.remove_css_class("is-pulsing")
+        else:
+            self.download_frame.add_css_class("is-pulsing")
+        return GLib.SOURCE_CONTINUE
+
+    def _set_pulse(self, active: bool) -> None:
+        if self._pulse_source_id:
+            GLib.source_remove(self._pulse_source_id)
+            self._pulse_source_id = 0
+        if not active:
+            if "is-pulsing" in self.download_frame.get_css_classes():
+                self.download_frame.remove_css_class("is-pulsing")
+            return
+        self._pulse_source_id = GLib.timeout_add(700, self._toggle_pulse)
+
     def _set_busy(self, visible: bool, message: str) -> None:
         self.busy_box.set_visible(visible)
         self.cancel_button.set_visible(visible and self.installing)
+        self._set_pulse(visible)
         if visible:
             self.busy_label.set_label(message)
-            self.spinner.start()
-        else:
-            self.spinner.stop()
 
     def _update_controls(self) -> None:
         device_ready = self._selected_device() is not None
@@ -1367,8 +1425,10 @@ class MainWindow(_ApplicationWindowBase):
         self.installing = False
         self._set_busy(False, "")
         if success:
+            self.success_box.set_visible(True)
             self._toast(str(message))
         else:
+            self.success_box.set_visible(False)
             self._show_error("Installazione non riuscita", str(message))
         self._update_controls()
 
@@ -1392,6 +1452,7 @@ class MainWindow(_ApplicationWindowBase):
         self._toast(f"{title}: {message}")
 
     def _on_close_request(self, *_args: Any) -> bool:
+        self._set_pulse(False)
         with self._install_process_lock:
             process = self._install_process
         if process is not None and process.poll() is None:

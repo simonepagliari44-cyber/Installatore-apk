@@ -1,6 +1,10 @@
-installatore-apk (1.0.4-1) unstable; urgency=medium
+installatore-apk (1.0.5-1) unstable; urgency=medium
 
-  * Install missing runtime dependencies automatically from the package setup.
-  * Keep the graphical interface available when ADB is unavailable.
+  * Show the app icon in the header bar and keep the device refresh
+    button only on the APK installation screen.
+  * Replace the busy spinner with a download indicator and show a green
+    check with "Fatto!" when the installation completes.
+  * Remove the project website link from the window and the README.
+  * Set the application id to com.simonecompany.installatoreapk.
 
  -- Installatore Apk <installatore-apk@localhost>  Fri, 25 Sep 2026 00:00:00 +0000
