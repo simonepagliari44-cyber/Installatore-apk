@@ -1,6 +1,9 @@
-installatore-apk (1.1.4-1) unstable; urgency=medium
+installatore-apk (1.1.5-1) unstable; urgency=medium
 
-  * Remove the icon-theme lookup from the download indicator: it could show
+  * Show the "Installa" label in the orange box during the install, and
+    drop the download icon entirely together with its assets and drawing
+    code, so no icon theme can substitute an unrelated symbol.
+  * Show the running version in the window, so it is immediately visible
     an unrelated symbol depending on the installed theme. The indicator now
     resolves SVG, then PNG, then a Cairo drawing, so it can never end up
     showing a stock icon.

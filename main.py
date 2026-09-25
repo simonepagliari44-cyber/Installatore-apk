@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import getpass
 import importlib
-import math
 import os
 import queue
 import re
@@ -27,10 +26,6 @@ Gtk: Any
 Pango: Any
 GI_IMPORT_ERROR: Any
 
-DOWNLOAD_IMAGE_NAMES = ("download.svg", "download.png")
-LINE_CAP_ROUND = 1
-LINE_JOIN_ROUND = 1
-DOWNLOAD_COLOR = (230 / 255, 97 / 255, 0 / 255)
 
 try:
     gi = importlib.import_module("gi")
@@ -681,12 +676,14 @@ class InstallerApplication(_ApplicationBase):
         .download-frame > contents {
             border-radius: 14px;
             background: alpha(#e66100, 0.14);
+            padding: 8px 14px;
         }
         .download-frame.is-pulsing > contents {
             background: alpha(#e66100, 0.30);
         }
-        .download-glyph {
+        .download-label {
             color: #e66100;
+            font-weight: 700;
         }
         .success-icon-frame {
             background: #26a269;
@@ -961,14 +958,11 @@ class MainWindow(_ApplicationWindowBase):
         )
         self.busy_box.set_halign(Gtk.Align.START)
         self.download_frame = Gtk.Frame()
-        self.download_frame.set_size_request(44, 44)
         self.download_frame.set_valign(Gtk.Align.CENTER)
         self.download_frame.add_css_class("download-frame")
-        self.download_area = Gtk.Image()
-        self.download_area.set_pixel_size(24)
-        self.download_area.add_css_class("download-glyph")
-        self.download_frame.set_child(self.download_area)
-        self._set_download_icon()
+        self.download_label = Gtk.Label(label="Installa")
+        self.download_label.add_css_class("download-label")
+        self.download_frame.set_child(self.download_label)
         self.busy_label = Gtk.Label(label="Lettura del file APK…")
         self.busy_label.set_wrap(True)
         self.busy_label.add_css_class("busy-label")
@@ -1442,67 +1436,6 @@ class MainWindow(_ApplicationWindowBase):
             self.busy_label.set_label("Annullamento in corso…")
         except OSError:
             pass
-
-    def _set_download_icon(self) -> None:
-        for name in DOWNLOAD_IMAGE_NAMES:
-            if _set_image_from_asset(self.download_area, name):
-                return
-        self._install_causal_drawer()
-
-    def _install_causal_drawer(self) -> None:
-        drawer = Gtk.DrawingArea()
-        drawer.set_content_width(24)
-        drawer.set_content_height(24)
-        drawer.set_draw_func(self._draw_download)
-        self.download_area = drawer
-        self.download_frame.set_child(drawer)
-
-    def _draw_download(
-        self, _area: Any, cr: Any, width: int, height: int
-    ) -> None:
-        size = float(min(width, height))
-        if size <= 0:
-            return
-        cr.set_source_rgb(*DOWNLOAD_COLOR)
-        cr.set_line_width(max(2.0, size * 0.1))
-        cr.set_line_cap(LINE_CAP_ROUND)
-        cr.set_line_join(LINE_JOIN_ROUND)
-
-        left = size * 0.19
-        right = size * 0.81
-        top = size * 0.46
-        bottom = size * 0.86
-        radius = size * 0.12
-        cr.new_sub_path()
-        cr.move_to(left, top)
-        cr.line_to(left, bottom - radius)
-        cr.arc(
-            left + radius,
-            bottom - radius,
-            radius,
-            math.pi,
-            1.5 * math.pi,
-        )
-        cr.line_to(right - radius, bottom)
-        cr.arc(
-            right - radius,
-            bottom - radius,
-            radius,
-            1.5 * math.pi,
-            2 * math.pi,
-        )
-        cr.line_to(right, top)
-        cr.stroke()
-
-        center = size * 0.5
-        cr.move_to(center, size * 0.10)
-        cr.line_to(center, size * 0.40)
-        cr.stroke()
-        head = size * 0.17
-        cr.move_to(center - head, size * 0.30)
-        cr.line_to(center, size * 0.40)
-        cr.line_to(center + head, size * 0.30)
-        cr.stroke()
 
     def _toggle_pulse(self) -> bool:
         if not self.busy_box.get_visible():

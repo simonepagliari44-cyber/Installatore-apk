@@ -3,7 +3,7 @@ set -eu
 umask 022
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-version=1.1.4-1
+version=1.1.5-1
 package="installatore-apk_${version}_all.deb"
 staging=$(mktemp -d)
 chmod 0755 "$staging"
@@ -11,7 +11,7 @@ dist="$root/dist"
 trap 'rm -rf "$staging"' EXIT
 
 command -v dpkg-deb >/dev/null 2>&1
-for required in main.py installatore-apk com.simonecompany.installatoreapk.desktop README.md data/installatore-apk.svg data/download.svg data/download.png debian/control debian/postinst debian/postrm; do
+for required in main.py installatore-apk com.simonecompany.installatoreapk.desktop README.md data/installatore-apk.svg debian/control debian/postinst debian/postrm; do
     test -f "$root/$required"
 done
 
@@ -33,8 +33,6 @@ install -m 0644 "$root/com.simonecompany.installatoreapk.desktop" "$staging/usr/
 install -m 0644 "$root/README.md" "$staging/usr/share/doc/installatore-apk/README.md"
 install -m 0644 "$root/data/installatore-apk.svg" "$staging/usr/share/icons/hicolor/scalable/apps/installatore-apk.svg"
 install -m 0644 "$root/data/installatore-apk.svg" "$staging/usr/share/installatore-apk/installatore-apk.svg"
-install -m 0644 "$root/data/download.png" "$staging/usr/share/installatore-apk/download.png"
-install -m 0644 "$root/data/download.svg" "$staging/usr/share/installatore-apk/download.svg"
 printf '%s\n' "$version" > "$staging/usr/share/installatore-apk/VERSION"
 install -m 0644 "$root/debian/control" "$staging/DEBIAN/control"
 install -m 0755 "$root/debian/postinst" "$staging/DEBIAN/postinst"
