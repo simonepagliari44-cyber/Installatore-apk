@@ -23,31 +23,15 @@ check_gui() {
     "$python_bin" -c 'import gi, importlib; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); importlib.import_module("gi.repository.Gtk"); importlib.import_module("gi.repository.Adw")' >/dev/null 2>&1
 }
 
-check_svg_loader() {
-    "$python_bin" -c '
-import gi
-gi.require_version("GdkPixbuf", "2.0")
-from gi.repository import GdkPixbuf
-raise SystemExit(0 if GdkPixbuf.Pixbuf.get_formats().get("svg") else 1)
-' >/dev/null 2>&1
-}
-
-install_dependencies() {
-    dependencies="python3-gi gir1.2-gtk-4.0 gir1.2-adw-1 adb xdg-utils desktop-file-utils policykit-1"
-    if ! check_svg_loader; then
-        dependencies="$dependencies librsvg2-common"
-    fi
-    if command -v apt-get >/dev/null 2>&1; then
-        if [ "$(id -u)" -eq 0 ]; then
-            apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true
-        elif command -v pkexec >/dev/null 2>&1; then
-            pkexec apt-get install -y --no-install-recommends $dependencies >/dev/null 2>&1 || true
-        fi
-    fi
+missing_dependencies() {
+    missing=""
+    check_gui || missing="$missing python3-gi gir1.2-gtk-4.0 gir1.2-adw-1"
+    command -v "$adb_command" >/dev/null 2>&1 || missing="$missing adb"
+    printf '%s' "${missing# }"
 }
 
 if [ ! -x "$python_bin" ]; then
-    show_error "Python 3 non è disponibile. Installa python3 e riavvia l'applicazione."
+    show_error "Python 3 non è disponibile. Installa il pacchetto installatore-apk e riavvia l'applicazione."
     exit 1
 fi
 
@@ -56,12 +40,15 @@ if [ ! -f "$main_script" ]; then
     exit 1
 fi
 
-if ! check_gui || ! command -v "$adb_command" >/dev/null 2>&1 || ! check_svg_loader; then
-    install_dependencies
-fi
+missing=$(missing_dependencies)
+if [ -n "$missing" ]; then
+    show_error "Dipendenze mancanti:$missing
 
-if ! check_gui; then
-    show_error "Dipendenze grafiche mancanti. Installa python3-gi, gir1.2-gtk-4.0 e gir1.2-adw-1, poi riavvia l'applicazione."
+Installale con il gestore di pacchetti, una volta sola:
+  sudo apt install installatore-apk
+
+L'applicazione non installerà nulla da sola e non chiederà mai la
+password di amministratore all'avvio."
     exit 1
 fi
 

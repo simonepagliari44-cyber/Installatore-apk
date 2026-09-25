@@ -26,10 +26,12 @@
 Il pacchetto installa l’app, l’icona SVG, il file `.desktop`, la documentazione e le dipendenze necessarie:
 
 ```bash
-sudo apt install ./dist/installatore-apk_1.1.0-1_all.deb
+sudo apt install ./dist/installatore-apk_1.1.1-1_all.deb
 ```
 
-L’installazione del pacchetto esegue automaticamente `postinst`: se mancano GTK4, Libadwaita, ADB o `pkexec`, prova a installarli con `apt-get` senza richiedere comandi manuali. Se l’app viene avviata da un’installazione incompleta, anche il launcher `/usr/bin/installatore-apk` controlla GTK4/Libadwaita e riprova l’installazione, mostrando eventuali errori con `zenity` o notifiche di sistema. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
+L’installazione del pacchetto esegue automaticamente `postinst`: controlla GTK4, Libadwaita, ADB, il loader SVG e `aapt` e installa **solo ciò che manca davvero**, una volta sola, chiedendo la password di amministratore in quel momento. Se le dipendenze sono già tutte presenti non viene eseguito alcun `apt-get`.
+
+**L’app non chiede mai la password di amministratore all’avvio e funziona con permessi normali.** Il launcher `/usr/bin/installatore-apk` non installa più nulla: si limita a verificare l’ambiente e, se qualcosa manca, mostra un messaggio con il comando da eseguire. Se ADB non è disponibile, la finestra si apre comunque e l’app mostra l’errore di connessione.
 
 Dopo l’installazione, apri **Installatore Apk** dal menu delle applicazioni. Il launcher controlla l’ambiente Python, GTK4/Libadwaita e ADB, poi avvia `/usr/lib/installatore-apk/main.py` con `/usr/bin/python3`.
 
@@ -165,11 +167,17 @@ Il nuovo launcher controlla automaticamente l’ambiente grafico e tenta di inst
 installatore-apk
 ```
 
-Se compare un errore di permessi, autorizza l’installazione con `pkexec` quando viene richiesto. Dopo l’aggiornamento del pacchetto, esci dalla sessione grafica e rientra per aggiornare il menu delle applicazioni.
+Nessuna password di amministratore viene richiesta per usare l’app. Se ADB riporta `no permissions`, le regole udev non danno accesso al tuo utente: aggiungiti al gruppo `plugdev` **una volta sola**, poi esci e rientra nella sessione e ricollega il dispositivo.
+
+```bash
+sudo usermod -aG plugdev "$USER"
+```
+
+L’app mostra questa indicazione da sola quando rileva il caso. Dopo l’aggiornamento del pacchetto, esci dalla sessione grafica e rientra per aggiornare il menu delle applicazioni.
 
 ### `gi` non è installato
 
-Il launcher tenta l’installazione automatica; in alternativa puoi installare manualmente i pacchetti PyGObject e le librerie GTK4:
+Il launcher non installa più nulla per conto tuo: indica le dipendenze mancanti e il comando da eseguire. In alternativa puoi installare manualmente i pacchetti PyGObject e le librerie GTK4:
 
 ```bash
 sudo apt install python3-gi gir1.2-gtk-4.0 gir1.2-adw-1
@@ -250,7 +258,7 @@ chmod +x build-deb.sh
 Il pacchetto generato sarà:
 
 ```text
-dist/installatore-apk_1.1.0-1_all.deb
+dist/installatore-apk_1.1.1-1_all.deb
 ```
 
 Contenuto principale:
@@ -296,7 +304,7 @@ Per ricostruire il pacchetto dopo ogni modifica:
 
 ```bash
 ./build-deb.sh
-dpkg-deb --info dist/installatore-apk_1.1.0-1_all.deb
+dpkg-deb --info dist/installatore-apk_1.1.1-1_all.deb
 ```
 
 ## ⚠️ Note operative

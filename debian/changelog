@@ -1,5 +1,15 @@
-installatore-apk (1.1.0-1) unstable; urgency=medium
+installatore-apk (1.1.1-1) unstable; urgency=medium
 
+  * Stop asking for administrator authentication on every launch: the
+    launcher no longer installs anything and never calls pkexec, it only
+    reports the missing packages. It was prompting for a password on each
+    start because the SVG loader check could never pass (it needed a
+    GdkPixbuf typelib that the launcher did not install).
+  * Run apt-get from postinst only when something is genuinely missing.
+  * Use the standard GNOME download icon (folder-download-symbolic) in
+    the orange installation indicator.
+  * Report a clear message, with the one-time plugdev command, when USB
+    access is denied, so the app never needs root to work.
   * Use a standard GTK4 download icon for the installation indicator
     instead of a hand-drawn one, picking the first name available in the
     current icon theme.

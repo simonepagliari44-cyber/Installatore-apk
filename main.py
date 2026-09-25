@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import getpass
 import importlib
 import os
 import queue
@@ -26,11 +27,10 @@ Pango: Any
 GI_IMPORT_ERROR: Any
 
 DOWNLOAD_ICON_NAMES = (
-    "software-install-symbolic",
-    "system-software-install-symbolic",
     "folder-download-symbolic",
     "emblem-download-symbolic",
     "go-down-symbolic",
+    "system-software-install-symbolic",
 )
 
 try:
@@ -1295,7 +1295,23 @@ class MainWindow(_ApplicationWindowBase):
             if not labels:
                 labels = ["Nessun dispositivo connesso"]
             self._set_device_model(labels)
-            if self.devices:
+            blocked = next(
+                (
+                    device
+                    for device in self.devices
+                    if device.state == "no permissions"
+                ),
+                None,
+            )
+            if blocked is not None:
+                self.device_status_label.set_label(
+                    "Accesso USB negato: esegui una volta sola "
+                    f"«sudo usermod -aG plugdev {getpass.getuser()}», "
+                    "poi esci e rientra nella sessione e ricollega il "
+                    "dispositivo. L’app non usa i permessi di "
+                    "amministratore."
+                )
+            elif self.devices:
                 ready_index = next(
                     (
                         index
